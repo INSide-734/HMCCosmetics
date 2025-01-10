@@ -61,8 +61,6 @@ public class CosmeticUser {
     // Cosmetic Settings/Toggles
     private final ArrayList<HiddenReason> hiddenReason = new ArrayList<>();
     private final HashMap<CosmeticSlot, Color> colors = new HashMap<>();
-    // Cosmetic caches
-    private final HashMap<String, ItemStack> cosmeticItems = new HashMap<>();
 
     public CosmeticUser(UUID uuid) {
         this.uniqueId = uuid;
