@@ -64,6 +64,7 @@ public class UserWardrobeManager {
     private BossBar bossBar;
     @Getter
     private boolean active;
+    @Setter
     @Getter
     private WardrobeStatus wardrobeStatus;
     @Getter
@@ -284,7 +285,7 @@ public class UserWardrobeManager {
         run.run();
     }
 
-    public void update() {
+    private void update() {
         final AtomicInteger data = new AtomicInteger();
 
         BukkitRunnable runnable = new BukkitRunnable() {
@@ -344,10 +345,6 @@ public class UserWardrobeManager {
         };
 
         runnable.runTaskTimer(HMCCosmeticsPlugin.getInstance(), 0, 2);
-    }
-
-    public void setWardrobeStatus(WardrobeStatus status) {
-        this.wardrobeStatus = status;
     }
 
     public enum WardrobeStatus {
