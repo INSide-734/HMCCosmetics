@@ -33,7 +33,7 @@ public class HMCCServerUtils {
     }
 
     public static org.bukkit.entity.Entity getEntity(int entityId) {
-        return NMSHandlers.getHandler().getEntity(entityId);
+        return NMSHandlers.getHandler().getUtilHandler().getEntity(entityId);
     }
 
     /**

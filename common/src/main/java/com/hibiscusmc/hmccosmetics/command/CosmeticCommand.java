@@ -43,10 +43,14 @@ public class CosmeticCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
         boolean silent = false;
+        boolean console = false;
+
+        if (!(sender instanceof Player)) {
+            console = true;
+        }
 
         if (args.length == 0) {
-            if (!(sender instanceof Player)) {
-                // Console
+            if (console) {
                 return true;
             }
             if (!sender.hasPermission("hmccosmetics.cmd.default")) {
@@ -140,7 +144,7 @@ public class CosmeticCommand implements CommandExecutor {
 
                 CosmeticUser user = CosmeticUsers.getUser(player);
 
-                if (!user.canEquipCosmetic(cosmetic)) {
+                if (!user.canEquipCosmetic(cosmetic) && !console) {
                     if (!silent) MessagesUtil.sendMessage(player, "no-cosmetic-permission");
                     return true;
                 }
@@ -247,12 +251,16 @@ public class CosmeticCommand implements CommandExecutor {
             }
             // cosmetic menu exampleMenu playerName
             case ("menu") -> {
-                if (args.length == 1) return true;
                 if (!sender.hasPermission("hmccosmetics.cmd.menu")) {
                     if (!silent) MessagesUtil.sendMessage(sender, "no-permission");
                     return true;
                 }
-                Menu menu = Menus.getMenu(args[1]);
+                Menu menu;
+                if (args.length == 1) {
+                    menu = Menus.getDefaultMenu();
+                } else {
+                    menu = Menus.getMenu(args[1]);
+                }
 
                 if (sender instanceof Player) player = ((Player) sender).getPlayer();
                 if (sender.hasPermission("hmccosmetics.cmd.menu.other")) {
@@ -334,7 +342,7 @@ public class CosmeticCommand implements CommandExecutor {
                 }
                 Wardrobe wardrobe = WardrobeSettings.getWardrobe(args[1]);
                 if (wardrobe == null) {
-                    wardrobe = new Wardrobe(args[1], new WardrobeLocation(null, null, null), null, -1);
+                    wardrobe = new Wardrobe(args[1], new WardrobeLocation(null, null, null), null, -1, null);
                     WardrobeSettings.addWardrobe(wardrobe);
                     //MessagesUtil.sendMessage(player, "no-wardrobes");
                     //return true;

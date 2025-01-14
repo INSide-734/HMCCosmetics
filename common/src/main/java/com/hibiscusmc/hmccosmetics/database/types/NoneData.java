@@ -1,9 +1,11 @@
 package com.hibiscusmc.hmccosmetics.database.types;
 
+import com.hibiscusmc.hmccosmetics.database.UserData;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class NoneData extends Data {
     @Override
@@ -17,8 +19,8 @@ public class NoneData extends Data {
     }
 
     @Override
-    public @Nullable CosmeticUser get(UUID uniqueId) {
-        return new CosmeticUser(uniqueId);
+    public @Nullable CompletableFuture<UserData> get(UUID uniqueId) {
+        return CompletableFuture.completedFuture(new UserData(uniqueId));
     }
 
     @Override

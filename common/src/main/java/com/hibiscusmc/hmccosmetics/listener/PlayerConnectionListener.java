@@ -4,6 +4,7 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.DatabaseSettings;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.database.Database;
+import com.hibiscusmc.hmccosmetics.database.UserData;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
@@ -16,6 +17,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 public class PlayerConnectionListener implements Listener {
 
@@ -33,17 +36,24 @@ public class PlayerConnectionListener implements Listener {
                 );
         }
 
+        // This literally makes me want to end it all but I can't do that so I'll just cry instead
         Runnable run = () -> {
             if (!event.getPlayer().isOnline()) return; // If a player is no longer online, don't run this.
-            CosmeticUser user = Database.get(event.getPlayer().getUniqueId());
-            CosmeticUsers.addUser(user);
-            MessagesUtil.sendDebugMessages("Run User Join");
+            UUID uuid = event.getPlayer().getUniqueId();
+            Database.get(uuid).thenAccept(data -> {
+                if (data == null) return;
+                Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
+                    CosmeticUser cosmeticUser = new CosmeticUser(uuid, data);
+                    CosmeticUsers.addUser(cosmeticUser);
+                    MessagesUtil.sendDebugMessages("Run User Join for " + uuid);
 
-            // And finally, launch an update for the cosmetics they have.
-            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
-                if (user.getPlayer() == null) return;
-                user.updateCosmetic();
-            }, 4);
+                    // And finally, launch an update for the cosmetics they have.
+                    Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+                        if (cosmeticUser.getPlayer() == null) return;
+                        cosmeticUser.updateCosmetic();
+                    }, 4);
+                });
+            });
         };
 
         if (DatabaseSettings.isEnabledDelay()) {

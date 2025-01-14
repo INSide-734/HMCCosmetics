@@ -24,6 +24,12 @@ cosmetic-settings:
   force-permission-join: true # Checks a player permission if they can have a cosmetic when they join the server.
   force-show-join: false # If the plugin should force show a player's cosmetics when they join the server.
 
+  # This determines what to process what areas to process placeholders when displaying the item to the user.
+  # This can be heavy on servers with a lot of players, so if experiencing lag issues relating to setting display/lores of items, disable this.
+  item-processing:
+    display-name: true
+    lore: true
+
   # This is a list of worlds that cosmetics are hidden in. When a player enters one of these worlds, their cosmetics will be hidden.
   disabled-worlds:
     - "disabledworld"
@@ -123,6 +129,9 @@ hook-settings:
     # This causes the plugin to reload itself after any ItemsAdder change. This keeps the plugin fully up to date with IA, but
     # could cause console spam as HMCCosmetics has to reload itself as well.
     reload-on-change: false
+  nexo:
+    # This causes the plugin to reload itself after any Nexo change. This keeps the plugin fully up to date with Nexo
+    reload-on-change: true
   worldguard:
     # Checks worldguard regions for HMCC flags. If set to false, flags will not work properly.
     # Requires restart to apply changes.
@@ -168,6 +177,7 @@ wardrobe:
     default:
       distance: -1 # Distance in blocks that a player can interact with the wardrobe. -1 to ignore.
       permission: "hmccosmetics.wardrobe.default" # Permission required to use the wardrobe.
+      default-menu: defaultmenu
       npc-location:
         world: "world"
         x: 0

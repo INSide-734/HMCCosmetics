@@ -45,6 +45,7 @@ public class WardrobeSettings {
     private static final String WARDROBES_PATH = "wardrobes";
     private static final String PERMISSION_PATH = "permission";
     private static final String DISTANCE_PATH = "distance";
+    private static final String WARDROBE_DEFAULT_MENU = "default-menu";
     private static final String BOSSBAR_PATH = "bossbar";
     private static final String BOSSBAR_ENABLE_PATH = "enabled";
     private static final String BOSSBAR_TEXT_PATH = "text";
@@ -174,9 +175,10 @@ public class WardrobeSettings {
                 WardrobeLocation wardrobeLocation = new WardrobeLocation(npcLocation, viewerLocation, leaveLocation);
 
                 String permission = wardrobesNode.node(PERMISSION_PATH).getString();
+                String defaultMenu = wardrobesNode.node(WARDROBE_DEFAULT_MENU).getString();
                 int distance = wardrobesNode.node(DISTANCE_PATH).getInt(-1);
 
-                Wardrobe wardrobe = new Wardrobe(id, wardrobeLocation, permission, distance);
+                Wardrobe wardrobe = new Wardrobe(id, wardrobeLocation, permission, distance, defaultMenu);
                 addWardrobe(wardrobe);
             } catch (Exception e) {
                 MessagesUtil.sendDebugMessages("Unable to create wardrobe " + id, Level.SEVERE);
