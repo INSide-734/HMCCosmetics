@@ -111,7 +111,7 @@ public class PlayerGameListener implements Listener {
         if (!event.isSneaking()) return;
         if (!user.isInWardrobe()) return;
 
-        user.leaveWardrobe();
+        user.leaveWardrobe(false);
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -125,7 +125,7 @@ public class PlayerGameListener implements Listener {
         }
 
         if (user.isInWardrobe()) {
-            user.leaveWardrobe();
+            user.leaveWardrobe(false);
         }
 
         Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
@@ -202,7 +202,7 @@ public class PlayerGameListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            if (WardrobeSettings.isDamagedKicked()) user.leaveWardrobe();
+            if (WardrobeSettings.isDamagedKicked()) user.leaveWardrobe(false);
         }
     }
 
@@ -345,7 +345,7 @@ public class PlayerGameListener implements Listener {
         CosmeticUser user = CosmeticUsers.getUser(event.getEntity());
         if (user == null) return;
 
-        if (user.isInWardrobe()) user.leaveWardrobe();
+        if (user.isInWardrobe()) user.leaveWardrobe(false);
 
         if (Settings.isUnapplyOnDeath() && !event.getEntity().hasPermission("hmccosmetics.unapplydeath.bypass")) {
             user.removeCosmetics();

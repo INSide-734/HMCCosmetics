@@ -243,9 +243,9 @@ public class CosmeticCommand implements CommandExecutor {
                 CosmeticUser user = CosmeticUsers.getUser(player);
 
                 if (user.isInWardrobe()) {
-                    user.leaveWardrobe();
+                    user.leaveWardrobe(false);
                 } else {
-                    user.enterWardrobe(false, wardrobe);
+                    user.enterWardrobe(wardrobe, false);
                 }
                 return true;
             }
