@@ -268,7 +268,7 @@ public class CosmeticUser {
             }
         }
         if (items.isEmpty() || getEntity() == null) return;
-        PacketManager.equipmentSlotUpdate(getEntity().getEntityId(), items, HMCCPlayerUtils.getNearbyPlayers(getEntity().getLocation()));
+        PacketManager.equipmentSlotUpdate(getEntity().getEntityId(), items, HMCCPacketManager.getViewers(getEntity().getLocation()));
         MessagesUtil.sendDebugMessages("updateCosmetic (All) - end - " + items.size());
     }
 
@@ -538,9 +538,9 @@ public class CosmeticUser {
         EquipmentSlot equipmentSlot = HMCCInventoryUtils.getEquipmentSlot(slot);
         if (equipmentSlot == null) return;
         if (getPlayer() != null) {
-            PacketManager.equipmentSlotUpdate(getEntity().getEntityId(), equipmentSlot, getPlayer().getInventory().getItem(equipmentSlot), HMCCPlayerUtils.getNearbyPlayers(getEntity().getLocation()));
+            PacketManager.equipmentSlotUpdate(getEntity().getEntityId(), equipmentSlot, getPlayer().getInventory().getItem(equipmentSlot), HMCCPacketManager.getViewers(getEntity().getLocation()));
         } else {
-            HMCCPacketManager.equipmentSlotUpdate(getEntity().getEntityId(), this, slot, HMCCPlayerUtils.getNearbyPlayers(getEntity().getLocation()));
+            HMCCPacketManager.equipmentSlotUpdate(getEntity().getEntityId(), this, slot, HMCCPacketManager.getViewers(getEntity().getLocation()));
         }
     }
 
@@ -649,7 +649,7 @@ public class CosmeticUser {
             if (!isBalloonSpawned()) respawnBalloon();
             CosmeticBalloonType balloonType = (CosmeticBalloonType) getCosmetic(CosmeticSlot.BALLOON);
             getBalloonManager().addPlayerToModel(this, balloonType);
-            List<Player> viewer = HMCCPlayerUtils.getNearbyPlayers(getEntity().getLocation());
+            List<Player> viewer = HMCCPacketManager.getViewers(getEntity().getLocation());
             HMCCPacketManager.sendLeashPacket(getBalloonManager().getPufferfishBalloonId(), getPlayer().getEntityId(), viewer);
         }
         if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {

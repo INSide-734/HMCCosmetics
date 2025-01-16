@@ -43,7 +43,7 @@ public class UserEntity {
         if (System.currentTimeMillis() - viewerLastUpdate <= 1000) return List.of(); //Prevents mass refreshes
         ArrayList<Player> newPlayers = new ArrayList<>();
         ArrayList<Player> removePlayers = new ArrayList<>();
-        List<Player> players = HMCCPlayerUtils.getNearbyPlayers(location);
+        List<Player> players = HMCCPacketManager.getViewers(location);
         Player ownerPlayer = Bukkit.getPlayer(owner);
         if (ownerPlayer == null) {
             MessagesUtil.sendDebugMessages("Owner is null (refreshViewers), returning empty list");
