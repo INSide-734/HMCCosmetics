@@ -16,8 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot.*;
-
 public class HMCCInventoryUtils {
 
     private static final Map<CosmeticSlot, EquipmentSlot> SLOT_MAP = new HashMap<>();
@@ -71,9 +69,9 @@ public class HMCCInventoryUtils {
 
     public static CosmeticSlot getItemSlotToCosmeticSlot(final EnumWrappers.ItemSlot slot) {
         return switch (slot) {
-            case HEAD -> HELMET;
-            case CHEST -> CHESTPLATE;
-            case LEGS -> LEGGINGS;
+            case HEAD -> CosmeticSlot.HELMET;
+            case CHEST -> CosmeticSlot.CHESTPLATE;
+            case LEGS -> CosmeticSlot.LEGGINGS;
             case FEET -> CosmeticSlot.BOOTS;
             case OFFHAND -> CosmeticSlot.OFFHAND;
             case MAINHAND -> CosmeticSlot.MAINHAND;
@@ -86,9 +84,9 @@ public class HMCCInventoryUtils {
             case HAND -> CosmeticSlot.MAINHAND;
             case OFF_HAND -> CosmeticSlot.OFFHAND;
             case FEET -> CosmeticSlot.BOOTS;
-            case LEGS -> LEGGINGS;
-            case CHEST -> CHESTPLATE;
-            case HEAD -> HELMET;
+            case LEGS -> CosmeticSlot.LEGGINGS;
+            case CHEST -> CosmeticSlot.CHESTPLATE;
+            case HEAD -> CosmeticSlot.HELMET;
             default -> null;
         };
     }
@@ -98,13 +96,13 @@ public class HMCCInventoryUtils {
     public static CosmeticSlot BukkitCosmeticSlot(int slot) {
         switch (slot) {
             case 36 -> {
-                return HELMET;
+                return CosmeticSlot.HELMET;
             }
             case 37 -> {
-                return CHESTPLATE;
+                return CosmeticSlot.CHESTPLATE;
             }
             case 38 -> {
-                return LEGGINGS;
+                return CosmeticSlot.LEGGINGS;
             }
             case 39 -> {
                 return CosmeticSlot.BOOTS;
@@ -123,13 +121,13 @@ public class HMCCInventoryUtils {
     public static CosmeticSlot NMSCosmeticSlot(int slot) {
         switch (slot) {
             case 5 -> {
-                return HELMET;
+                return CosmeticSlot.HELMET;
             }
             case 6 -> {
-                return CHESTPLATE;
+                return CosmeticSlot.CHESTPLATE;
             }
             case 7 -> {
-                return LEGGINGS;
+                return CosmeticSlot.LEGGINGS;
             }
             case 8 -> {
                 return CosmeticSlot.BOOTS;
