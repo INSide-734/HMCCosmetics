@@ -79,6 +79,8 @@ public class CosmeticUser {
         // Occasionally updates the entity cosmetics
         Runnable run = () -> {
             MessagesUtil.sendDebugMessages("Tick[uuid=" + uniqueId + "]", Level.INFO);
+            if (Hooks.isInvisible(uniqueId)) hideCosmetics(HiddenReason.VANISH);
+            else showCosmetics(HiddenReason.VANISH);
             updateCosmetic();
             if (isHidden() && !getUserEmoteManager().isPlayingEmote() && !getCosmetics().isEmpty()) MessagesUtil.sendActionBar(getPlayer(), "hidden-cosmetics");
         };
@@ -692,6 +694,7 @@ public class CosmeticUser {
         NONE,
         WORLDGUARD,
         PLUGIN,
+        VANISH,
         POTION,
         ACTION,
         COMMAND,
