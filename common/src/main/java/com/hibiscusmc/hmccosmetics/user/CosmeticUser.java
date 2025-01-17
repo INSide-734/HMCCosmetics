@@ -192,7 +192,7 @@ public class CosmeticUser {
 
     public void removeCosmetics() {
         // Small optimization could be made, but Concurrent modification prevents us from both getting and removing
-        for (CosmeticSlot slot : CosmeticSlot.values()) {
+        for (CosmeticSlot slot : CosmeticSlot.values().values()) {
             removeCosmeticSlot(slot);
         }
     }

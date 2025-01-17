@@ -314,7 +314,7 @@ public class UserWardrobeManager {
                 int nextyaw = HMCCServerUtils.getNextYaw(yaw, rotationSpeed);
                 data.set(nextyaw);
 
-                for (CosmeticSlot slot : CosmeticSlot.values()) {
+                for (CosmeticSlot slot : CosmeticSlot.values().values()) {
                     HMCCPacketManager.equipmentSlotUpdate(NPC_ID, user, slot, viewer);
                 }
 

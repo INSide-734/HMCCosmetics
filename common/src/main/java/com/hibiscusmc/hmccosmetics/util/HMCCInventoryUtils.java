@@ -12,9 +12,23 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot.*;
 
 public class HMCCInventoryUtils {
+
+    private static final Map<CosmeticSlot, EquipmentSlot> SLOT_MAP = new HashMap<>();
+    static {
+        SLOT_MAP.put(CosmeticSlot.HELMET, EquipmentSlot.HEAD);
+        SLOT_MAP.put(CosmeticSlot.CHESTPLATE, EquipmentSlot.CHEST);
+        SLOT_MAP.put(CosmeticSlot.LEGGINGS, EquipmentSlot.LEGS);
+        SLOT_MAP.put(CosmeticSlot.BOOTS, EquipmentSlot.FEET);
+        SLOT_MAP.put(CosmeticSlot.OFFHAND, EquipmentSlot.OFF_HAND);
+        SLOT_MAP.put(CosmeticSlot.MAINHAND, EquipmentSlot.HAND);
+    }
 
     /**
      * Converts from the Bukkit item slots to ProtocolLib item slots. Will produce a null if an improper bukkit item slot is sent through
@@ -57,9 +71,9 @@ public class HMCCInventoryUtils {
 
     public static CosmeticSlot getItemSlotToCosmeticSlot(final EnumWrappers.ItemSlot slot) {
         return switch (slot) {
-            case HEAD -> CosmeticSlot.HELMET;
-            case CHEST -> CosmeticSlot.CHESTPLATE;
-            case LEGS -> CosmeticSlot.LEGGINGS;
+            case HEAD -> HELMET;
+            case CHEST -> CHESTPLATE;
+            case LEGS -> LEGGINGS;
             case FEET -> CosmeticSlot.BOOTS;
             case OFFHAND -> CosmeticSlot.OFFHAND;
             case MAINHAND -> CosmeticSlot.MAINHAND;
@@ -72,9 +86,9 @@ public class HMCCInventoryUtils {
             case HAND -> CosmeticSlot.MAINHAND;
             case OFF_HAND -> CosmeticSlot.OFFHAND;
             case FEET -> CosmeticSlot.BOOTS;
-            case LEGS -> CosmeticSlot.LEGGINGS;
-            case CHEST -> CosmeticSlot.CHESTPLATE;
-            case HEAD -> CosmeticSlot.HELMET;
+            case LEGS -> LEGGINGS;
+            case CHEST -> CHESTPLATE;
+            case HEAD -> HELMET;
             default -> null;
         };
     }
@@ -84,13 +98,13 @@ public class HMCCInventoryUtils {
     public static CosmeticSlot BukkitCosmeticSlot(int slot) {
         switch (slot) {
             case 36 -> {
-                return CosmeticSlot.HELMET;
+                return HELMET;
             }
             case 37 -> {
-                return CosmeticSlot.CHESTPLATE;
+                return CHESTPLATE;
             }
             case 38 -> {
-                return CosmeticSlot.LEGGINGS;
+                return LEGGINGS;
             }
             case 39 -> {
                 return CosmeticSlot.BOOTS;
@@ -109,13 +123,13 @@ public class HMCCInventoryUtils {
     public static CosmeticSlot NMSCosmeticSlot(int slot) {
         switch (slot) {
             case 5 -> {
-                return CosmeticSlot.HELMET;
+                return HELMET;
             }
             case 6 -> {
-                return CosmeticSlot.CHESTPLATE;
+                return CHESTPLATE;
             }
             case 7 -> {
-                return CosmeticSlot.LEGGINGS;
+                return LEGGINGS;
             }
             case 8 -> {
                 return CosmeticSlot.BOOTS;
@@ -132,29 +146,7 @@ public class HMCCInventoryUtils {
     @Contract(pure = true)
     @Nullable
     public static EquipmentSlot getEquipmentSlot(@NotNull CosmeticSlot slot) {
-        switch (slot) {
-            case HELMET -> {
-                return EquipmentSlot.HEAD;
-            }
-            case CHESTPLATE -> {
-                return EquipmentSlot.CHEST;
-            }
-            case LEGGINGS -> {
-                return EquipmentSlot.LEGS;
-            }
-            case BOOTS -> {
-                return EquipmentSlot.FEET;
-            }
-            case OFFHAND -> {
-                return EquipmentSlot.OFF_HAND;
-            }
-            case MAINHAND -> {
-                return EquipmentSlot.HAND;
-            }
-            default -> {
-                return null;
-            }
-        }
+        return SLOT_MAP.get(slot);
     }
 
     public static EquipmentSlot getEquipmentSlot(@NotNull EnumWrappers.ItemSlot slot) {
