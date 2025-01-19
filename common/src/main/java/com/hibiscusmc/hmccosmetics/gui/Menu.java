@@ -11,6 +11,8 @@ import com.hibiscusmc.hmccosmetics.gui.type.types.TypeCosmetic;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
+import dev.triumphteam.gui.components.GuiType;
+import dev.triumphteam.gui.components.InventoryProvider;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import lombok.Getter;
@@ -24,6 +26,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -141,7 +144,9 @@ public class Menu {
         final Component component = AdventureUtils.MINI_MESSAGE.deserialize(Hooks.processPlaceholders(player, this.title));
         Gui gui = Gui.gui()
                 .title(component)
+                .type(GuiType.CHEST)
                 .rows(this.rows)
+                .inventory((title, owner, rows) -> Bukkit.createInventory(owner, rows, title))
                 .create();
 
         gui.setDefaultClickAction(event -> event.setCancelled(true));
