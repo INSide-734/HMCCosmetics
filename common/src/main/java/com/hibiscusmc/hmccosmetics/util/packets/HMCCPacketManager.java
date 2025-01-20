@@ -18,7 +18,6 @@ import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerRelEnt
 import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
