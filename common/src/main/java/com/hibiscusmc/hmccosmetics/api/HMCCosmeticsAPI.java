@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class HMCCosmeticsAPI {
@@ -85,6 +86,7 @@ public class HMCCosmeticsAPI {
      * Gets all Cosmetics that are currently registered with HMCC. This list is immutable!
      * @return A list of all registered cosmetics
      */
+    @NotNull
     public static List<Cosmetic> getAllCosmetics() {
         return List.copyOf(Cosmetics.values());
     }
@@ -93,8 +95,27 @@ public class HMCCosmeticsAPI {
      * Gets all CosmeticUsers that are currently registered with HMCC. This list is immutable!
      * @return A list of all registered CosmeticUsers
      */
+    @NotNull
     public static List<CosmeticUser> getAllCosmeticUsers() {
         return List.copyOf(CosmeticUsers.values());
+    }
+
+    /**
+     * Gets all the cosmetic slots that are registered with HMCC. This map is immutable!
+     * @return A map of all registered cosmetic slots
+     */
+    @NotNull
+    public static Map<String, CosmeticSlot> getAllCosmeticSlots() {
+        return Map.copyOf(CosmeticSlot.values());
+    }
+
+    /**
+     * Registers a new cosmetic slot with the given id. If a slot with the given id already exists, it will be returned.
+     * @param id The id of the slot, this will automatically be converted to all UPPERCASE when registering the slot
+     */
+    @NotNull
+    public static CosmeticSlot registerCosmeticSlot(@NotNull String id) {
+        return CosmeticSlot.register(id);
     }
 
     /**
