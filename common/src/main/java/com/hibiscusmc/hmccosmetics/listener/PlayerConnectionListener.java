@@ -1,6 +1,9 @@
 package com.hibiscusmc.hmccosmetics.listener;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.api.events.PlayerLoadEvent;
+import com.hibiscusmc.hmccosmetics.api.events.PlayerPreLoadEvent;
+import com.hibiscusmc.hmccosmetics.api.events.PlayerUnloadEvent;
 import com.hibiscusmc.hmccosmetics.config.DatabaseSettings;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.database.Database;
@@ -40,12 +43,20 @@ public class PlayerConnectionListener implements Listener {
         Runnable run = () -> {
             if (!event.getPlayer().isOnline()) return; // If a player is no longer online, don't run this.
             UUID uuid = event.getPlayer().getUniqueId();
+
+            PlayerPreLoadEvent preLoadEvent = new PlayerPreLoadEvent(uuid);
+            Bukkit.getPluginManager().callEvent(preLoadEvent);
+            if (preLoadEvent.isCancelled()) return;
+
             Database.get(uuid).thenAccept(data -> {
                 if (data == null) return;
                 Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
                     CosmeticUser cosmeticUser = new CosmeticUser(uuid, data);
                     CosmeticUsers.addUser(cosmeticUser);
                     MessagesUtil.sendDebugMessages("Run User Join for " + uuid);
+
+                    PlayerLoadEvent playerLoadEvent = new PlayerLoadEvent(cosmeticUser);
+                    Bukkit.getPluginManager().callEvent(playerLoadEvent);
 
                     // And finally, launch an update for the cosmetics they have.
                     Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
@@ -68,6 +79,10 @@ public class PlayerConnectionListener implements Listener {
     public void onPlayerQuit(@NotNull PlayerQuitEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
         if (user == null) return; // Player never initialized, don't do anything
+
+        PlayerUnloadEvent playerUnloadEvent = new PlayerUnloadEvent(user);
+        Bukkit.getPluginManager().callEvent(playerUnloadEvent);
+
         if (user.isInWardrobe()) {
             user.leaveWardrobe(true);
             user.getPlayer().setInvisible(false);
