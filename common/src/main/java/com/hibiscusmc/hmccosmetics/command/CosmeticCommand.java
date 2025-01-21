@@ -379,7 +379,7 @@ public class CosmeticCommand implements CommandExecutor {
                         if (!silent) MessagesUtil.sendMessage(player, "set-wardrobe-distance");
                         return true;
                     }
-                    if (args[2].equalsIgnoreCase("default-menu")) {
+                    if (args[2].equalsIgnoreCase("defaultmenu")) {
                         WardrobeSettings.setWardrobeDefaultMenu(wardrobe, args[3]);
                         if (!silent) MessagesUtil.sendMessage(player, "set-wardrobe-menu");
                         return true;
