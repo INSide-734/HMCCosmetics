@@ -106,7 +106,9 @@ public class HMCCPacketManager extends PacketManager {
         final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
 
         // 0x21 = Invisible + Fire (Aka, burns to make it not take the light of the block its in, avoiding turning it black)
-        wrappedDataValueList.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x21));
+        byte mask = 0x20;
+        if (Settings.isBackpackPreventDarkness()) mask = 0x21;
+        wrappedDataValueList.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), mask));
         wrappedDataValueList.add(new WrappedDataValue(15, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x10));
         packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
         for (Player p : sendTo) sendPacket(p, packet);
