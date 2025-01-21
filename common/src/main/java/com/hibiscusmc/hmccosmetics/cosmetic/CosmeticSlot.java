@@ -1,6 +1,7 @@
 package com.hibiscusmc.hmccosmetics.cosmetic;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Map;
@@ -27,15 +28,32 @@ public class CosmeticSlot {
         REGISTRY.put(name, this);
     }
 
+    /**
+     * Registers a new slot with the given name. If a slot with the given name already exists, it will be returned.
+     * @param name The name of the slot (This will automatically be converted into all UPPERCASE)
+     * @return The slot that was registered or already exists.
+     */
+    @NotNull
     public static CosmeticSlot register(@NotNull String name) {
         name = name.toUpperCase();
         return REGISTRY.computeIfAbsent(name, key -> new CosmeticSlot(key));
     }
 
+    /**
+     * Returns an unmodifiable map of all the slots that have been registered.
+     * @return An unmodifiable map of all the slots that have been registered.
+     */
+    @NotNull
     public static Map<String, CosmeticSlot> values() {
         return Collections.unmodifiableMap(REGISTRY);
     }
 
+    /**
+     * Gets the slot with the given name.
+     * @param name The name of the slot to get. This is automatically converted to all UPPERCASE.
+     * @return The slot with the given name, or null if it does not exist.
+     */
+    @Nullable
     public static CosmeticSlot valueOf(@NotNull String name) {
         name = name.toUpperCase();
         return REGISTRY.get(name);
@@ -43,8 +61,8 @@ public class CosmeticSlot {
 
     /**
      * Checks if the registry contains a slot with the given name.
-     * @param name
-     * @return
+     * @param name The name of the slot to check for. This is automatically converted to all UPPERCASE.
+     * @return True if the slot exists, false otherwise.
      */
     public static boolean contains(@NotNull String name) {
         name = name.toUpperCase();
