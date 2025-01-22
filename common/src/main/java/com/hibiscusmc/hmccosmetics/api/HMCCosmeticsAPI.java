@@ -139,7 +139,7 @@ public final class HMCCosmeticsAPI {
      * </p>
      *
      * @param id the id for the cosmetic slot
-     * @return the {@link CosmeticSlot} associated with the given ID
+     * @return the {@link CosmeticSlot} associated with the given id
      */
     public static @NotNull CosmeticSlot registerCosmeticSlot(@NotNull String id) {
         return CosmeticSlot.register(id);
