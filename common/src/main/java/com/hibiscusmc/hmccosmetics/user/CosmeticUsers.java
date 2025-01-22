@@ -81,7 +81,7 @@ public class CosmeticUsers {
      * @throws IllegalArgumentException if the provider is already registered by another plugin
      */
     public static void registerProvider(final CosmeticUserProvider provider) {
-        if(provider != CosmeticUserProvider.DEFAULT) {
+        if(PROVIDER != CosmeticUserProvider.DEFAULT) {
             throw new IllegalArgumentException("CosmeticUserProvider already registered by %s, this conflicts with %s attempting to register their own.".formatted(
                 PROVIDER.getProviderPlugin().getName(),
                 provider.getProviderPlugin().getName()
