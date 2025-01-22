@@ -20,7 +20,10 @@ import java.util.UUID;
 /**
  * The main API class for HMCCosmetics. This class provides methods to interact with the plugin.
  */
-public class HMCCosmeticsAPI {
+public final class HMCCosmeticsAPI {
+    private HMCCosmeticsAPI() {
+        throw new UnsupportedOperationException("This class cannot be instantiated.");
+    }
 
     /**
      * Retrieves a {@link Cosmetic} associated with the specified id.
