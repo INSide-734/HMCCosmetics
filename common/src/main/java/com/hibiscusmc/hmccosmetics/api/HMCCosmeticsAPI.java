@@ -31,7 +31,7 @@ public final class HMCCosmeticsAPI {
      * This method attempts to fetch a {@link Cosmetic} using the given id. If no {@link Cosmetic} exists
      * with the specified id, it will return {@code null}.
      * </p>
-     * @param id the id of the {@link Cosmetic} to retrieve; must not be {@code null}
+     * @param id the id of the {@link Cosmetic} to retrieve
      * @return the {@link Cosmetic} if it exists, or {@code null} if no cosmetic is associated with the given id
      */
     public static @Nullable Cosmetic getCosmetic(@NotNull String id) {
@@ -51,7 +51,7 @@ public final class HMCCosmeticsAPI {
      * </ul>
      * Always perform a {@code null} check before using the returned object to ensure safe operation.
      *
-     * @param uuid the {@link UUID} of the player whose {@link CosmeticUser} is being retrieved; must not be {@code null}
+     * @param uuid the {@link UUID} of the player whose {@link CosmeticUser} is being retrieved
      * @return the {@link CosmeticUser} if it exists, or {@code null} if the player is offline or unassociated
      */
     public static @Nullable CosmeticUser getUser(@NotNull UUID uuid) {
@@ -61,7 +61,7 @@ public final class HMCCosmeticsAPI {
     /**
      * Retrieves a {@link Menu} associated with the specified id, or {@code null} if no menu exists with the given id.
      *
-     * @param id the id of the menu to retrieve; must not be {@code null}
+     * @param id the id of the menu to retrieve
      * @return the {@link Menu} if it exists, or {@code null} if no menu is associated with the given id
      */
     public static @Nullable Menu getMenu(@NotNull String id) {
