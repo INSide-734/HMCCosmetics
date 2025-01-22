@@ -1,34 +1,26 @@
 package com.hibiscusmc.hmccosmetics.api.events;
 
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 /**
- * Called before a player is loaded into the plugin (including before the plugin gets their data).
- * This event is cancellable, and if cancelled, the player will not be loaded into the plugin.
+ * Called before a player's data is loaded into the plugin.
+ *
+ * <p>
+ *     If this event is cancelled, the player's data will not be loaded,
+ *     and the player will not be able to interact with the plugin.
+ * </p>
  */
 public class PlayerPreLoadEvent extends PlayerEvent implements Cancellable {
+    private static final HandlerList HANDLER_LIST = new HandlerList();
 
-    private static final HandlerList handlers = new HandlerList();
     private boolean cancelled = false;
 
     public PlayerPreLoadEvent(@NotNull UUID id) {
         super(id);
-    }
-
-    @Override
-    @NotNull
-    public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    @NotNull
-    public static HandlerList getHandlerList() {
-        return handlers;
     }
 
     @Override
@@ -39,5 +31,14 @@ public class PlayerPreLoadEvent extends PlayerEvent implements Cancellable {
     @Override
     public void setCancelled(boolean cancel) {
         this.cancelled = cancel;
+    }
+
+    @Override
+    public @NotNull HandlerList getHandlers() {
+        return HANDLER_LIST;
+    }
+
+    public static @NotNull HandlerList getHandlerList() {
+        return HANDLER_LIST;
     }
 }

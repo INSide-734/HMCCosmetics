@@ -6,23 +6,21 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Called when a menu is closed by a player
+ * Called when a {@link Menu} is closed by a player.
  */
 public class PlayerMenuCloseEvent extends PlayerMenuEvent {
-    private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList HANDLER_LIST = new HandlerList();
 
     public PlayerMenuCloseEvent(@NotNull CosmeticUser who, @NotNull Menu menu) {
         super(who, menu);
     }
 
     @Override
-    @NotNull
-    public HandlerList getHandlers() {
-        return handlers;
+    public @NotNull HandlerList getHandlers() {
+        return HANDLER_LIST;
     }
 
-    @NotNull
-    public static HandlerList getHandlerList() {
-        return handlers;
+    public static @NotNull HandlerList getHandlerList() {
+        return HANDLER_LIST;
     }
 }
