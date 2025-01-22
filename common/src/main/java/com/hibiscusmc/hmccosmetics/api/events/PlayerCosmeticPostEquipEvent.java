@@ -21,7 +21,7 @@ public class PlayerCosmeticPostEquipEvent extends PlayerCosmeticEvent {
     /**
      * Gets the {@link Cosmetic} being equipped in this event.
      *
-     * @return the {@link Cosmetic} which is being equipped in this event
+     * @return the cosmetic which is being equipped in this event
      */
     public @NotNull Cosmetic getCosmetic() {
         return cosmetic;
@@ -30,7 +30,7 @@ public class PlayerCosmeticPostEquipEvent extends PlayerCosmeticEvent {
     /**
      * Sets the {@link Cosmetic} that the player will equip.
      *
-     * @param cosmetic the {@link Cosmetic} that the player will equip
+     * @param cosmetic the cosmetic that the player will equip
      */
     public void setCosmetic(@NotNull Cosmetic cosmetic) {
         this.cosmetic = cosmetic;

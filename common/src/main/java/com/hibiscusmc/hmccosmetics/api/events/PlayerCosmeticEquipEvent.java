@@ -6,8 +6,6 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 /**
  * Called when a player equips a {@link Cosmetic}.
  */
@@ -26,7 +24,7 @@ public class PlayerCosmeticEquipEvent extends PlayerCosmeticEvent implements Can
     /**
      * Gets the {@link Cosmetic} being equipped in this event.
      *
-     * @return the {@link Cosmetic} which is being equipped in this event
+     * @return the cosmetic which is being equipped in this event
      */
     @NotNull
     public Cosmetic getCosmetic() {
@@ -36,7 +34,7 @@ public class PlayerCosmeticEquipEvent extends PlayerCosmeticEvent implements Can
     /**
      * Sets the {@link Cosmetic} that the player will equip.
      *
-     * @param cosmetic the {@link Cosmetic} that the player will equip
+     * @param cosmetic the cosmetic that the player will equip
      */
     public void setCosmetic(@NotNull Cosmetic cosmetic) {
         this.cosmetic = cosmetic;

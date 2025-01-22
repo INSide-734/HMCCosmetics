@@ -23,7 +23,7 @@ public class PlayerCosmeticHideEvent extends PlayerCosmeticEvent implements Canc
     /**
      * Gets the {@link CosmeticUser.HiddenReason} as to why cosmetics are being hidden for the player.
      *
-     * @return the {@link CosmeticUser.HiddenReason} why cosmetics are being hidden for the player
+     * @return the reason why cosmetics are being hidden for the player
      */
     public @NotNull CosmeticUser.HiddenReason getReason() {
         return reason;
