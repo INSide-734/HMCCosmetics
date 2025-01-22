@@ -6,7 +6,7 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Called when a player has equipped a {@link Cosmetic}
+ * Called when a player has equipped a {@link Cosmetic}.
  */
 public class PlayerCosmeticPostEquipEvent extends PlayerCosmeticEvent {
     private static final HandlerList HANDLER_LIST = new HandlerList();
