@@ -21,6 +21,13 @@ public interface CosmeticUserProvider {
     CosmeticUser createCosmeticUser(UUID playerId, UserData userData);
 
     /**
+     * Construct the custom {@link CosmeticUser}.
+     * @param playerId the player uuid
+     * @return the {@link CosmeticUser}
+     */
+    CosmeticUser createCosmeticUserWithoutData(UUID playerId);
+
+    /**
      * Represents the plugin that is providing this {@link CosmeticUserProvider}
      * @return the plugin
      */
@@ -33,6 +40,11 @@ public interface CosmeticUserProvider {
         @Override
         public CosmeticUser createCosmeticUser(UUID playerId, UserData userData) {
             return new CosmeticUser(playerId, userData);
+        }
+
+        @Override
+        public CosmeticUser createCosmeticUserWithoutData(UUID playerId) {
+            return new CosmeticUser(playerId);
         }
 
         @Override
