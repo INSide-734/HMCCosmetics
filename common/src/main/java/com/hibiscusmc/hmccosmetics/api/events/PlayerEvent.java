@@ -5,20 +5,22 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
+/**
+ * Represents an event related to a {@link org.bukkit.entity.Player}.
+ */
 public abstract class PlayerEvent extends Event {
+    protected final UUID player;
 
-    protected UUID player;
-
-    public PlayerEvent(@NotNull final UUID uuid) {
+    public PlayerEvent(@NotNull UUID uuid) {
         this.player = uuid;
     }
 
     /**
-     * Returns the UUID of the player involved in this event
-     * @return User who is involved in this event
+     * Returns the {@link UUID} of the player involved in this event.
+     *
+     * @return the UUID of the player who is involved in this event
      */
-    @NotNull
-    public final UUID getUniqueId() {
+    public final @NotNull UUID getUniqueId() {
         return player;
     }
 }
