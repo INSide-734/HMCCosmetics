@@ -159,6 +159,15 @@ public final class HMCCosmeticsAPI {
     }
 
     /**
+     * Fetch the current {@link CosmeticUserProvider} that is in use.
+     *
+     * @return the {@link CosmeticUserProvider}
+     */
+    public static CosmeticUserProvider getCosmeticUserProvider() {
+        return CosmeticUsers.getProvider();
+    }
+
+    /**
      * Retrieves the NMS version of the server as recognized by HMCCosmetics.
      *
      * <p>This value will be {@code null} until the HMCC setup has been completed. Ensure setup is finished
