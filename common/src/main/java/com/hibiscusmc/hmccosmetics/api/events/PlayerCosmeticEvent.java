@@ -16,7 +16,7 @@ public abstract class PlayerCosmeticEvent extends PlayerEvent {
     }
 
     /**
-     * Returns the user involved in this event.
+     * Returns the {@link CosmeticUser} involved in this event.
      *
      * @return the user who is involved in this event
      */
