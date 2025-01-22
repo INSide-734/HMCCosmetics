@@ -10,22 +10,21 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CosmeticSlot {
     private static final ConcurrentHashMap<String, CosmeticSlot> REGISTRY = new ConcurrentHashMap<>();
 
-    public static final CosmeticSlot HELMET = new CosmeticSlot("HELMET");
-    public static final CosmeticSlot CHESTPLATE = new CosmeticSlot("CHESTPLATE");
-    public static final CosmeticSlot LEGGINGS = new CosmeticSlot("LEGGINGS");
-    public static final CosmeticSlot BOOTS = new CosmeticSlot("BOOTS");
-    public static final CosmeticSlot MAINHAND = new CosmeticSlot("MAINHAND");
-    public static final CosmeticSlot OFFHAND = new CosmeticSlot("OFFHAND");
-    public static final CosmeticSlot BACKPACK = new CosmeticSlot("BACKPACK");
-    public static final CosmeticSlot BALLOON = new CosmeticSlot("BALLOON");
-    public static final CosmeticSlot EMOTE = new CosmeticSlot("EMOTE");
-    public static final CosmeticSlot CUSTOM = new CosmeticSlot("CUSTOM");
+    public static final CosmeticSlot HELMET = register("HELMET");
+    public static final CosmeticSlot CHESTPLATE = register("CHESTPLATE");
+    public static final CosmeticSlot LEGGINGS = register("LEGGINGS");
+    public static final CosmeticSlot BOOTS = register("BOOTS");
+    public static final CosmeticSlot MAINHAND = register("MAINHAND");
+    public static final CosmeticSlot OFFHAND = register("OFFHAND");
+    public static final CosmeticSlot BACKPACK = register("BACKPACK");
+    public static final CosmeticSlot BALLOON = register("BALLOON");
+    public static final CosmeticSlot EMOTE = register("EMOTE");
+    public static final CosmeticSlot CUSTOM = register("CUSTOM");
 
     private final String name;
 
     private CosmeticSlot(@NotNull String name) {
         this.name = name;
-        REGISTRY.put(name, this);
     }
 
     /**
