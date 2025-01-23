@@ -7,9 +7,12 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import com.hibiscusmc.hmccosmetics.user.CosmeticUserProvider;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import lombok.Getter;
 import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import org.bukkit.Color;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -143,6 +146,25 @@ public final class HMCCosmeticsAPI {
      */
     public static @NotNull CosmeticSlot registerCosmeticSlot(@NotNull String id) {
         return CosmeticSlot.register(id);
+    }
+
+    /**
+     * Registers a new cosmetic user provider to use to construct {@link CosmeticUser}s.
+     *
+     * @param provider the provider to register
+     * @throws IllegalArgumentException if another plugin has already registered a provider
+     */
+    public static void registerCosmeticUserProvider(final CosmeticUserProvider provider) {
+        CosmeticUsers.registerProvider(provider);
+    }
+
+    /**
+     * Fetch the current {@link CosmeticUserProvider} that is in use.
+     *
+     * @return the {@link CosmeticUserProvider}
+     */
+    public static CosmeticUserProvider getCosmeticUserProvider() {
+        return CosmeticUsers.getProvider();
     }
 
     /**

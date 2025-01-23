@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics.user;
 
 import com.google.common.collect.HashBiMap;
 import com.hibiscusmc.hmccosmetics.util.HMCCServerUtils;
+import lombok.Getter;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -11,8 +12,9 @@ import java.util.Set;
 import java.util.UUID;
 
 public class CosmeticUsers {
-
     private static final HashBiMap<UUID, CosmeticUser> COSMETIC_USERS = HashBiMap.create();
+
+    private static CosmeticUserProvider PROVIDER = CosmeticUserProvider.DEFAULT;
 
     /**
      * Adds a user to the Hashmap of stored CosmeticUsers. This will not override an entry if it already exists. If you need to override, delete then add.
@@ -70,6 +72,31 @@ public class CosmeticUsers {
         if (entity == null) return null;
         if (!(entity instanceof Player player)) return null;
         return COSMETIC_USERS.get(player.getUniqueId());
+    }
+
+    /**
+     * Register a custom {@link CosmeticUserProvider} to provide your own user implementation to
+     * be used and queried.
+     * @param provider the provider to register
+     * @throws IllegalArgumentException if the provider is already registered by another plugin
+     */
+    public static void registerProvider(final CosmeticUserProvider provider) {
+        if(PROVIDER != CosmeticUserProvider.DEFAULT) {
+            throw new IllegalArgumentException("CosmeticUserProvider already registered by %s, this conflicts with %s attempting to register their own.".formatted(
+                PROVIDER.getProviderPlugin().getName(),
+                provider.getProviderPlugin().getName()
+            ));
+        }
+
+        PROVIDER = provider;
+    }
+
+    /**
+     * Fetch the current {@link CosmeticUserProvider} being used.
+     * @return the current {@link CosmeticUserProvider} being used
+     */
+    public static CosmeticUserProvider getProvider() {
+        return PROVIDER;
     }
 
     /**
