@@ -2,7 +2,6 @@ package com.hibiscusmc.hmccosmetics.user;
 
 import com.google.common.collect.HashBiMap;
 import com.hibiscusmc.hmccosmetics.util.HMCCServerUtils;
-import lombok.Getter;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +53,7 @@ public class CosmeticUsers {
     /**
      * This method allows you to get a CosmeticUser from just using the player class. This just allows you to have a bit less boilerplate.
      * @param player The player to lookup (will take their UUID from the class)
-     * @return Returns the user if there is a vlaid user, returns null if not.
+     * @return Returns the user if there is a valid user, returns null if not.
      */
     @Nullable
     public static CosmeticUser getUser(@NotNull Player player) {
