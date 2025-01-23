@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics.user;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.database.UserData;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 
 import java.util.UUID;
@@ -17,6 +18,7 @@ public interface CosmeticUserProvider {
      * @param playerId the player uuid
      * @param userData the user data associated with the player
      * @return the {@link CosmeticUser}
+     * @apiNote This method is called during the {@link PlayerJoinEvent}.
      */
     CosmeticUser createCosmeticUser(UUID playerId, UserData userData);
 
@@ -24,6 +26,7 @@ public interface CosmeticUserProvider {
      * Construct the custom {@link CosmeticUser}.
      * @param playerId the player uuid
      * @return the {@link CosmeticUser}
+     * @apiNote This method is called during the {@link PlayerJoinEvent}.
      */
     CosmeticUser createCosmeticUserWithoutData(UUID playerId);
 
