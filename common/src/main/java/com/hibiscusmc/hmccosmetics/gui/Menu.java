@@ -1,6 +1,7 @@
 package com.hibiscusmc.hmccosmetics.gui;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.api.events.PlayerMenuCloseEvent;
 import com.hibiscusmc.hmccosmetics.api.events.PlayerMenuOpenEvent;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
@@ -169,6 +170,9 @@ public class Menu {
         });
 
         gui.setCloseGuiAction(event -> {
+            PlayerMenuCloseEvent closeEvent = new PlayerMenuCloseEvent(user, this, event.getReason());
+            Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> Bukkit.getPluginManager().callEvent(closeEvent));
+
             if (taskid.get() != -1) Bukkit.getScheduler().cancelTask(taskid.get());
         });
 
