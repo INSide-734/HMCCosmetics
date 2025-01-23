@@ -4,6 +4,7 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.database.UserData;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -20,7 +21,7 @@ public interface CosmeticUserProvider {
      * @return the {@link CosmeticUser}
      * @apiNote This method is called during the {@link PlayerJoinEvent}.
      */
-    CosmeticUser createCosmeticUser(UUID playerId, UserData userData);
+    @NotNull CosmeticUser createCosmeticUser(@NotNull UUID playerId, @NotNull UserData userData);
 
     /**
      * Construct the custom {@link CosmeticUser}.
@@ -28,7 +29,7 @@ public interface CosmeticUserProvider {
      * @return the {@link CosmeticUser}
      * @apiNote This method is called during the {@link PlayerJoinEvent}.
      */
-    CosmeticUser createCosmeticUserWithoutData(UUID playerId);
+    @NotNull CosmeticUser createCosmeticUserWithoutData(@NotNull UUID playerId);
 
     /**
      * Represents the plugin that is providing this {@link CosmeticUserProvider}
@@ -41,12 +42,12 @@ public interface CosmeticUserProvider {
      */
     class Default implements CosmeticUserProvider {
         @Override
-        public CosmeticUser createCosmeticUser(UUID playerId, UserData userData) {
+        public @NotNull CosmeticUser createCosmeticUser(@NotNull UUID playerId, @NotNull UserData userData) {
             return new CosmeticUser(playerId, userData);
         }
 
         @Override
-        public CosmeticUser createCosmeticUserWithoutData(UUID playerId) {
+        public @NotNull CosmeticUser createCosmeticUserWithoutData(@NotNull UUID playerId) {
             return new CosmeticUser(playerId);
         }
 
