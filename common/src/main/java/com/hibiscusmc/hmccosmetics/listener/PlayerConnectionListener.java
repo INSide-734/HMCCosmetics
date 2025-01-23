@@ -1,21 +1,16 @@
 package com.hibiscusmc.hmccosmetics.listener;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
-import com.hibiscusmc.hmccosmetics.api.HMCCosmeticsAPI;
 import com.hibiscusmc.hmccosmetics.api.events.PlayerLoadEvent;
 import com.hibiscusmc.hmccosmetics.api.events.PlayerPreLoadEvent;
 import com.hibiscusmc.hmccosmetics.api.events.PlayerUnloadEvent;
 import com.hibiscusmc.hmccosmetics.config.DatabaseSettings;
-import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.database.Database;
-import com.hibiscusmc.hmccosmetics.database.UserData;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
-import com.hibiscusmc.hmccosmetics.user.CosmeticUserProvider;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.user.manager.UserEmoteManager;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -26,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-@Slf4j
 public class PlayerConnectionListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -69,7 +63,7 @@ public class PlayerConnectionListener implements Listener {
                     }, 4);
                 });
             }).exceptionally(ex -> {
-                log.error("Unable to load Cosmetic User {}", uuid, ex);
+                MessagesUtil.sendDebugMessages("Unable to load Cosmetic User " + uuid + ". Exception: " + ex.getMessage());
                 return null;
             });
         };
