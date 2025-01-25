@@ -11,6 +11,7 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUserProvider;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import lombok.Getter;
 import me.lojosho.hibiscuscommons.nms.NMSHandlers;
+import me.lojosho.shaded.configurate.ConfigurationNode;
 import org.bukkit.Color;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 
 /**
  * The main API class for HMCCosmetics. This class provides methods to interact with the plugin.
@@ -144,8 +146,8 @@ public final class HMCCosmeticsAPI {
      * @param id the id for the cosmetic slot
      * @return the {@link CosmeticSlot} associated with the given id
      */
-    public static @NotNull CosmeticSlot registerCosmeticSlot(@NotNull String id) {
-        return CosmeticSlot.register(id);
+    public static @NotNull CosmeticSlot registerCosmeticSlot(@NotNull String id, BiConsumer<String, ConfigurationNode> consumer) {
+        return CosmeticSlot.register(id, consumer);
     }
 
     /**

@@ -102,18 +102,12 @@ public class Cosmetics {
                 continue;
             }
             String slot = slotNode.getString("");
-            if (!CosmeticSlot.contains(slot)) {
+            CosmeticSlot cosmeticSlot = CosmeticSlot.valueOf(slot);
+            if (cosmeticSlot == null) {
                 MessagesUtil.sendDebugMessages("Unable to create " + id + " because " + slotNode.getString() + " is not a valid slot!", Level.WARNING);
                 continue;
             }
-            switch (slot) {
-                case "BALLOON" -> new CosmeticBalloonType(id, cosmeticConfig);
-                case "BACKPACK" -> new CosmeticBackpackType(id, cosmeticConfig);
-                case "MAINHAND" -> new CosmeticMainhandType(id, cosmeticConfig);
-                case "EMOTE" -> new CosmeticEmoteType(id, cosmeticConfig);
-                case "HELMET", "CHESTPLATE", "LEGGINGS", "BOOTS", "OFFHAND" -> new CosmeticArmorType(id, cosmeticConfig);
-                default -> new CosmeticTypeRegisterEvent(id, cosmeticConfig).callEvent();
-            }
+            cosmeticSlot.accept(id, cosmeticConfig);
         }
     }
 }

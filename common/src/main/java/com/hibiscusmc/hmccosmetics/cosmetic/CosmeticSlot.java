@@ -1,30 +1,44 @@
 package com.hibiscusmc.hmccosmetics.cosmetic;
 
+import com.hibiscusmc.hmccosmetics.cosmetic.types.*;
+import me.lojosho.shaded.configurate.ConfigurationNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class CosmeticSlot {
     private static final ConcurrentHashMap<String, CosmeticSlot> REGISTRY = new ConcurrentHashMap<>();
 
-    public static final CosmeticSlot HELMET = register("HELMET");
-    public static final CosmeticSlot CHESTPLATE = register("CHESTPLATE");
-    public static final CosmeticSlot LEGGINGS = register("LEGGINGS");
-    public static final CosmeticSlot BOOTS = register("BOOTS");
-    public static final CosmeticSlot MAINHAND = register("MAINHAND");
-    public static final CosmeticSlot OFFHAND = register("OFFHAND");
-    public static final CosmeticSlot BACKPACK = register("BACKPACK");
-    public static final CosmeticSlot BALLOON = register("BALLOON");
-    public static final CosmeticSlot EMOTE = register("EMOTE");
-    public static final CosmeticSlot CUSTOM = register("CUSTOM");
+    public static final CosmeticSlot HELMET = register("HELMET", CosmeticArmorType::new);
+    public static final CosmeticSlot CHESTPLATE = register("CHESTPLATE", CosmeticArmorType::new);
+    public static final CosmeticSlot LEGGINGS = register("LEGGINGS", CosmeticArmorType::new);
+    public static final CosmeticSlot BOOTS = register("BOOTS", CosmeticArmorType::new);
+    public static final CosmeticSlot MAINHAND = register("MAINHAND", CosmeticMainhandType::new);
+    public static final CosmeticSlot OFFHAND = register("OFFHAND", CosmeticArmorType::new);
+    public static final CosmeticSlot BACKPACK = register("BACKPACK", CosmeticBackpackType::new);
+    public static final CosmeticSlot BALLOON = register("BALLOON", CosmeticBalloonType::new);
+    public static final CosmeticSlot EMOTE = register("EMOTE", CosmeticEmoteType::new);
 
     private final String name;
+    private final BiConsumer<String, ConfigurationNode> consumer;
 
-    private CosmeticSlot(@NotNull String name) {
+    private CosmeticSlot(@NotNull String name, @NotNull BiConsumer<String, ConfigurationNode> consumer) {
         this.name = name;
+        this.consumer = consumer;
+    }
+
+    /**
+     * Accepts the given id and configuration node to run the consumer relating to the ConsumerSlot
+     * @param id The id of the cosmetic
+     * @param config The configuration node of the cosmetic
+     */
+    public void accept(@NotNull String id, @NotNull ConfigurationNode config) {
+        consumer.accept(id, config);
     }
 
     /**
@@ -33,9 +47,9 @@ public class CosmeticSlot {
      * @return The slot that was registered or already exists.
      */
     @NotNull
-    public static CosmeticSlot register(@NotNull String name) {
+    public static CosmeticSlot register(@NotNull String name, @NotNull BiConsumer<String, ConfigurationNode> consumer) {
         name = name.toUpperCase();
-        return REGISTRY.computeIfAbsent(name, key -> new CosmeticSlot(key));
+        return REGISTRY.computeIfAbsent(name, key -> new CosmeticSlot(key, consumer));
     }
 
     /**
