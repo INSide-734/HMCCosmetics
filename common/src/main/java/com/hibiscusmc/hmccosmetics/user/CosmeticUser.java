@@ -21,7 +21,6 @@ import com.hibiscusmc.hmccosmetics.user.manager.UserEmoteManager;
 import com.hibiscusmc.hmccosmetics.user.manager.UserWardrobeManager;
 import com.hibiscusmc.hmccosmetics.util.HMCCInventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
-import com.hibiscusmc.hmccosmetics.util.HMCCPlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import lombok.Getter;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
@@ -62,20 +61,42 @@ public class CosmeticUser {
     private final ArrayList<HiddenReason> hiddenReason = new ArrayList<>();
     private final HashMap<CosmeticSlot, Color> colors = new HashMap<>();
 
+    @Deprecated(forRemoval = true, since = "2.7.5")
+    public CosmeticUser(UUID uuid, UserData data) {
+        this(uuid);
+    }
+
     public CosmeticUser(UUID uuid) {
         this.uniqueId = uuid;
-        userEmoteManager = new UserEmoteManager(this);
-        tick();
+        this.userEmoteManager = new UserEmoteManager(this);
     }
 
-    public CosmeticUser(UUID uuid, UserData data) {
-        this.uniqueId = uuid;
-        userEmoteManager = new UserEmoteManager(this);
-        loadData(data);
-        tick();
+    /**
+     * Initialize the {@link CosmeticUser}.
+     * @param userData the associated {@link UserData}
+     * @return the {@link CosmeticUser}
+     * @apiNote Initialize is called after {@link CosmeticUserProvider#createCosmeticUser(UUID)} so it is possible to
+     * populate an extending version of {@link CosmeticUser} with data then override this method to apply your
+     * own state.
+     */
+    public CosmeticUser initialize(final @Nullable UserData userData) {
+        if(userData != null) {
+            // CosmeticSlot -> Entry<Cosmetic, Integer>
+            for(final var entry : userData.getCosmetics().entrySet()) {
+                final Cosmetic cosmetic = entry.getValue().getKey();
+                final Integer colorRGBInt = entry.getValue().getValue();
+
+                this.applyCosmetic(cosmetic, colorRGBInt);
+            }
+
+            this.applyHiddenState(userData);
+        }
+
+        this.startTickTask();
+        return this;
     }
 
-    private void tick() {
+    private void startTickTask() {
         // Occasionally updates the entity cosmetics
         Runnable run = () -> {
             MessagesUtil.sendDebugMessages("Tick[uuid=" + uniqueId + "]", Level.INFO);
@@ -98,51 +119,77 @@ public class CosmeticUser {
         despawnBalloon();
     }
 
-    public void loadData(@NotNull UserData data) {
-        boolean permissionCheck = Settings.isForcePermissionJoin();
-
-        for (Map.Entry<CosmeticSlot, Map.Entry<Cosmetic, Integer>> entry : data.getCosmetics().entrySet()) {
-            Cosmetic cosmetic = entry.getValue().getKey();
-            Color color = entry.getValue().getValue() == -1 ? null : Color.fromRGB(entry.getValue().getValue());
-
-            if (permissionCheck && cosmetic.requiresPermission()) {
-                if (getPlayer() != null && !getPlayer().hasPermission(cosmetic.getPermission())) {
-                    continue;
-                }
-            }
-            addPlayerCosmetic(cosmetic, color);
+    protected boolean applyCosmetic(Cosmetic cosmetic, Integer colorRGBInt) {
+        final Player bukkitPlayer = getPlayer();
+        if(bukkitPlayer == null) {
+            MessagesUtil.sendDebugMessages("Cannot apply cosmetic, bukkit player is null");
+            return false;
         }
 
-        if (!hiddenReason.isEmpty()) {
-            for (CosmeticUser.HiddenReason reason : hiddenReason) silentlyAddHideFlag(reason);
-        } else {
-            for (HiddenReason reason : data.getHiddenReasons()) {
-                if (getPlayer() != null && Settings.isDisabledGamemodesEnabled() && Settings.getDisabledGamemodes().contains(getPlayer().getGameMode().toString())) {
-                    MessagesUtil.sendDebugMessages("Hiding Cosmetics due to gamemode");
-                    hideCosmetics(CosmeticUser.HiddenReason.GAMEMODE);
-                    return;
-                } else {
-                    if (isHidden(CosmeticUser.HiddenReason.GAMEMODE)) {
-                        MessagesUtil.sendDebugMessages("Join Gamemode Check: Showing Cosmetics");
-                        showCosmetics(CosmeticUser.HiddenReason.GAMEMODE);
-                        return;
-                    }
-                }
-                // Handle world check
-                if (getPlayer() != null && Settings.getDisabledWorlds().contains(getPlayer().getWorld().getName())) {
-                    MessagesUtil.sendDebugMessages("Hiding Cosmetics due to world");
-                    hideCosmetics(CosmeticUser.HiddenReason.WORLD);
-                } else {
-                    if (isHidden(CosmeticUser.HiddenReason.WORLD)) {
-                        MessagesUtil.sendDebugMessages("Join World Check: Showing Cosmetics");
-                        showCosmetics(CosmeticUser.HiddenReason.WORLD);
-                    }
-                }
-                if (Settings.isAllPlayersHidden()) {
-                    hideCosmetics(CosmeticUser.HiddenReason.DISABLED);
-                }
-                silentlyAddHideFlag(reason);
+        if(!this.canApplyCosmetic(bukkitPlayer, cosmetic)) {
+            MessagesUtil.sendDebugMessages("Player cannot apply cosmetic");
+            return false;
+        }
+
+        final Color color = colorRGBInt == -1
+            ? null
+            : Color.fromRGB(colorRGBInt);
+
+        this.addPlayerCosmetic(cosmetic, color);
+        return true;
+    }
+
+    protected boolean canApplyCosmetic(Player player, Cosmetic cosmetic) {
+        final boolean checkPermission = Settings.isForcePermissionJoin();
+        if(!checkPermission || !cosmetic.requiresPermission()) {
+            return true;
+        }
+
+        if(player == null) {
+            return false;
+        }
+
+        return player.hasPermission(cosmetic.getPermission());
+    }
+
+    protected void applyHiddenState(UserData userData) {
+        if(!hiddenReason.isEmpty()) {
+            for(final var reason : this.hiddenReason) {
+                this.silentlyAddHideFlag(reason);
             }
+            return;
+        }
+
+        final Player bukkitPlayer = getPlayer();
+
+        for(final var reason : userData.getHiddenReasons()) {
+            if(bukkitPlayer != null && Settings.isDisabledGamemodesEnabled() && Settings.getDisabledGamemodes().contains(bukkitPlayer.getGameMode().toString())) {
+                MessagesUtil.sendDebugMessages("Hiding cosmetics due to gamemode");
+                this.hideCosmetics(HiddenReason.GAMEMODE);
+
+                return;
+            } else if(this.isHidden(HiddenReason.GAMEMODE)) {
+                MessagesUtil.sendDebugMessages("Showing cosmetics for gamemode");
+                this.showCosmetics(HiddenReason.GAMEMODE);
+            }
+
+            if(bukkitPlayer != null && Settings.getDisabledGamemodes().contains(bukkitPlayer.getWorld().getName())) {
+                MessagesUtil.sendDebugMessages("Hiding Cosmetics due to gamemode");
+                this.hideCosmetics(CosmeticUser.HiddenReason.GAMEMODE);
+
+                return;
+            } else if(this.isHidden(HiddenReason.WORLD)) {
+                MessagesUtil.sendDebugMessages("Showing Cosmetics due to world");
+                this.showCosmetics(HiddenReason.WORLD);
+
+                return;
+            }
+
+            if(Settings.isAllPlayersHidden()) {
+                this.hideCosmetics(HiddenReason.DISABLED);
+            }
+
+            this.silentlyAddHideFlag(reason);
         }
     }
 
