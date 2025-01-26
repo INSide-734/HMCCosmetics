@@ -139,29 +139,26 @@ public class CosmeticUser {
         }
 
         Player bukkitPlayer = getPlayer();
+        if (bukkitPlayer != null && Settings.isDisabledGamemodesEnabled() && Settings.getDisabledGamemodes().contains(bukkitPlayer.getGameMode().toString())) {
+            MessagesUtil.sendDebugMessages("Hiding cosmetics due to gamemode");
+            hideCosmetics(HiddenReason.GAMEMODE);
+        } else if (this.isHidden(HiddenReason.GAMEMODE)) {
+            MessagesUtil.sendDebugMessages("Showing cosmetics for gamemode");
+            showCosmetics(HiddenReason.GAMEMODE);
+        }
+
+        if (bukkitPlayer != null && Settings.getDisabledWorlds().contains(getEntity().getLocation().getWorld().getName())) {
+            MessagesUtil.sendDebugMessages("Hiding Cosmetics due to world");
+            hideCosmetics(CosmeticUser.HiddenReason.WORLD);
+        } else if (this.isHidden(HiddenReason.WORLD)) {
+            MessagesUtil.sendDebugMessages("Showing Cosmetics due to world");
+            showCosmetics(HiddenReason.WORLD);
+        }
+        if (Settings.isAllPlayersHidden()) {
+            hideCosmetics(HiddenReason.DISABLED);
+        }
+
         for (final HiddenReason reason : hiddenReasons) {
-            if(bukkitPlayer != null && Settings.isDisabledGamemodesEnabled() && Settings.getDisabledGamemodes().contains(bukkitPlayer.getGameMode().toString())) {
-                MessagesUtil.sendDebugMessages("Hiding cosmetics due to gamemode");
-                this.hideCosmetics(HiddenReason.GAMEMODE);
-                return;
-            } else if(this.isHidden(HiddenReason.GAMEMODE)) {
-                MessagesUtil.sendDebugMessages("Showing cosmetics for gamemode");
-                this.showCosmetics(HiddenReason.GAMEMODE);
-            }
-
-            if(bukkitPlayer != null && Settings.getDisabledGamemodes().contains(bukkitPlayer.getWorld().getName())) {
-                MessagesUtil.sendDebugMessages("Hiding Cosmetics due to gamemode");
-                this.hideCosmetics(CosmeticUser.HiddenReason.GAMEMODE);
-                return;
-            } else if(this.isHidden(HiddenReason.WORLD)) {
-                MessagesUtil.sendDebugMessages("Showing Cosmetics due to world");
-                this.showCosmetics(HiddenReason.WORLD);
-                return;
-            }
-            if(Settings.isAllPlayersHidden()) {
-                this.hideCosmetics(HiddenReason.DISABLED);
-            }
-
             this.silentlyAddHideFlag(reason);
         }
     }
