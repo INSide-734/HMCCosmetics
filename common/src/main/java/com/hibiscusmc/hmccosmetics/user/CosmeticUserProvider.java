@@ -17,19 +17,10 @@ public interface CosmeticUserProvider {
     /**
      * Construct the custom {@link CosmeticUser}.
      * @param playerId the player uuid
-     * @param userData the user data associated with the player
      * @return the {@link CosmeticUser}
      * @apiNote This method is called during the {@link PlayerJoinEvent}.
      */
-    @NotNull CosmeticUser createCosmeticUser(@NotNull UUID playerId, @NotNull UserData userData);
-
-    /**
-     * Construct the custom {@link CosmeticUser}.
-     * @param playerId the player uuid
-     * @return the {@link CosmeticUser}
-     * @apiNote This method is called during the {@link PlayerJoinEvent}.
-     */
-    @NotNull CosmeticUser createCosmeticUserWithoutData(@NotNull UUID playerId);
+    @NotNull CosmeticUser createCosmeticUser(@NotNull UUID playerId);
 
     /**
      * Represents the plugin that is providing this {@link CosmeticUserProvider}
@@ -42,12 +33,7 @@ public interface CosmeticUserProvider {
      */
     class Default implements CosmeticUserProvider {
         @Override
-        public @NotNull CosmeticUser createCosmeticUser(@NotNull UUID playerId, @NotNull UserData userData) {
-            return new CosmeticUser(playerId, userData);
-        }
-
-        @Override
-        public @NotNull CosmeticUser createCosmeticUserWithoutData(@NotNull UUID playerId) {
+        public @NotNull CosmeticUser createCosmeticUser(@NotNull UUID playerId) {
             return new CosmeticUser(playerId);
         }
 
