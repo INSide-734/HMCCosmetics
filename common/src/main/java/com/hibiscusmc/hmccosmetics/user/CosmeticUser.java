@@ -61,12 +61,18 @@ public class CosmeticUser {
     private final ArrayList<HiddenReason> hiddenReason = new ArrayList<>();
     private final HashMap<CosmeticSlot, Color> colors = new HashMap<>();
 
+    /**
+     * Use {@link #CosmeticUser(UUID)} instead and use {@link #initialize(UserData)} to populate the user with data.
+     * @param uuid
+     * @param data
+     */
     @Deprecated(forRemoval = true, since = "2.7.5")
     public CosmeticUser(UUID uuid, UserData data) {
         this(uuid);
+        initialize(data);
     }
 
-    public CosmeticUser(UUID uuid) {
+    public CosmeticUser(@NotNull UUID uuid) {
         this.uniqueId = uuid;
         this.userEmoteManager = new UserEmoteManager(this);
     }
@@ -82,18 +88,82 @@ public class CosmeticUser {
     public CosmeticUser initialize(final @Nullable UserData userData) {
         if(userData != null) {
             // CosmeticSlot -> Entry<Cosmetic, Integer>
-            for(final var entry : userData.getCosmetics().entrySet()) {
+            for(final Map.Entry<CosmeticSlot, Map.Entry<Cosmetic, Integer>> entry : userData.getCosmetics().entrySet()) {
                 final Cosmetic cosmetic = entry.getValue().getKey();
                 final Integer colorRGBInt = entry.getValue().getValue();
 
-                this.applyCosmetic(cosmetic, colorRGBInt);
-            }
+                if (!this.canApplyCosmetic(cosmetic)) {
+                    MessagesUtil.sendDebugMessages("Cannot apply cosmetic[id=" + cosmetic.getId() + "]");
+                    continue;
+                }
 
-            this.applyHiddenState(userData);
+                Color color = null;
+                if (colorRGBInt != -1) color = Color.fromRGB(colorRGBInt); // -1 is defined as no color; anything else is a color
+
+                this.addPlayerCosmetic(cosmetic, color);
+            }
+            this.applyHiddenState(userData.getHiddenReasons());
         }
 
         this.startTickTask();
         return this;
+    }
+
+    /**
+     * This method is only called from {@link #initialize(UserData)} and can't be called directly.
+     * This is used to help hooking plugins apply custom logic to the user.
+     */
+    protected boolean applyCosmetic(@NotNull Cosmetic cosmetic, @Nullable Color color) {
+        this.addPlayerCosmetic(cosmetic, color);
+        return true;
+    }
+
+    /**
+     * This method is only called from {@link #initialize(UserData)} and can't be called directly.
+     * This is used to help hooking plugins apply custom logic to the user.
+     */
+    protected boolean canApplyCosmetic(@NotNull Cosmetic cosmetic) {
+        return canEquipCosmetic(cosmetic, false);
+    }
+
+    /**
+     * This method is only called from {@link #initialize(UserData)} and can't be called directly.
+     * This is used to help hooking plugins apply custom logic to the user.
+     */
+    protected void applyHiddenState(@NotNull List<HiddenReason> hiddenReasons) {
+        if(!hiddenReason.isEmpty()) {
+            for(final HiddenReason reason : this.hiddenReason) {
+                this.silentlyAddHideFlag(reason);
+            }
+            return;
+        }
+
+        Player bukkitPlayer = getPlayer();
+        for (final HiddenReason reason : hiddenReasons) {
+            if(bukkitPlayer != null && Settings.isDisabledGamemodesEnabled() && Settings.getDisabledGamemodes().contains(bukkitPlayer.getGameMode().toString())) {
+                MessagesUtil.sendDebugMessages("Hiding cosmetics due to gamemode");
+                this.hideCosmetics(HiddenReason.GAMEMODE);
+                return;
+            } else if(this.isHidden(HiddenReason.GAMEMODE)) {
+                MessagesUtil.sendDebugMessages("Showing cosmetics for gamemode");
+                this.showCosmetics(HiddenReason.GAMEMODE);
+            }
+
+            if(bukkitPlayer != null && Settings.getDisabledGamemodes().contains(bukkitPlayer.getWorld().getName())) {
+                MessagesUtil.sendDebugMessages("Hiding Cosmetics due to gamemode");
+                this.hideCosmetics(CosmeticUser.HiddenReason.GAMEMODE);
+                return;
+            } else if(this.isHidden(HiddenReason.WORLD)) {
+                MessagesUtil.sendDebugMessages("Showing Cosmetics due to world");
+                this.showCosmetics(HiddenReason.WORLD);
+                return;
+            }
+            if(Settings.isAllPlayersHidden()) {
+                this.hideCosmetics(HiddenReason.DISABLED);
+            }
+
+            this.silentlyAddHideFlag(reason);
+        }
     }
 
     private void startTickTask() {
@@ -117,80 +187,6 @@ public class CosmeticUser {
         Bukkit.getScheduler().cancelTask(taskId);
         despawnBackpack();
         despawnBalloon();
-    }
-
-    protected boolean applyCosmetic(Cosmetic cosmetic, Integer colorRGBInt) {
-        final Player bukkitPlayer = getPlayer();
-        if(bukkitPlayer == null) {
-            MessagesUtil.sendDebugMessages("Cannot apply cosmetic, bukkit player is null");
-            return false;
-        }
-
-        if(!this.canApplyCosmetic(bukkitPlayer, cosmetic)) {
-            MessagesUtil.sendDebugMessages("Player cannot apply cosmetic");
-            return false;
-        }
-
-        final Color color = colorRGBInt == -1
-            ? null
-            : Color.fromRGB(colorRGBInt);
-
-        this.addPlayerCosmetic(cosmetic, color);
-        return true;
-    }
-
-    protected boolean canApplyCosmetic(Player player, Cosmetic cosmetic) {
-        final boolean checkPermission = Settings.isForcePermissionJoin();
-        if(!checkPermission || !cosmetic.requiresPermission()) {
-            return true;
-        }
-
-        if(player == null) {
-            return false;
-        }
-
-        return player.hasPermission(cosmetic.getPermission());
-    }
-
-    protected void applyHiddenState(UserData userData) {
-        if(!hiddenReason.isEmpty()) {
-            for(final var reason : this.hiddenReason) {
-                this.silentlyAddHideFlag(reason);
-            }
-            return;
-        }
-
-        final Player bukkitPlayer = getPlayer();
-
-        for(final var reason : userData.getHiddenReasons()) {
-            if(bukkitPlayer != null && Settings.isDisabledGamemodesEnabled() && Settings.getDisabledGamemodes().contains(bukkitPlayer.getGameMode().toString())) {
-                MessagesUtil.sendDebugMessages("Hiding cosmetics due to gamemode");
-                this.hideCosmetics(HiddenReason.GAMEMODE);
-
-                return;
-            } else if(this.isHidden(HiddenReason.GAMEMODE)) {
-                MessagesUtil.sendDebugMessages("Showing cosmetics for gamemode");
-                this.showCosmetics(HiddenReason.GAMEMODE);
-            }
-
-            if(bukkitPlayer != null && Settings.getDisabledGamemodes().contains(bukkitPlayer.getWorld().getName())) {
-                MessagesUtil.sendDebugMessages("Hiding Cosmetics due to gamemode");
-                this.hideCosmetics(CosmeticUser.HiddenReason.GAMEMODE);
-
-                return;
-            } else if(this.isHidden(HiddenReason.WORLD)) {
-                MessagesUtil.sendDebugMessages("Showing Cosmetics due to world");
-                this.showCosmetics(HiddenReason.WORLD);
-
-                return;
-            }
-
-            if(Settings.isAllPlayersHidden()) {
-                this.hideCosmetics(HiddenReason.DISABLED);
-            }
-
-            this.silentlyAddHideFlag(reason);
-        }
     }
 
     public Cosmetic getCosmetic(CosmeticSlot slot) {
