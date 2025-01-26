@@ -1,21 +1,14 @@
 package com.hibiscusmc.hmccosmetics.cosmetic;
 
-import com.hibiscusmc.hmccosmetics.cosmetic.types.*;
 import lombok.Getter;
-import lombok.ToString;
-import me.lojosho.shaded.configurate.ConfigurationNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 @Getter
-@ToString
 public class CosmeticSlot {
     private static final ConcurrentHashMap<String, CosmeticSlot> REGISTRY = new ConcurrentHashMap<>();
 
@@ -80,5 +73,10 @@ public class CosmeticSlot {
     public static boolean contains(@NotNull String name) {
         final String upperName = name.toUpperCase();
         return REGISTRY.containsKey(upperName);
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }
