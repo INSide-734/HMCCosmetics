@@ -45,10 +45,9 @@ import java.util.*;
 import java.util.logging.Level;
 
 public class CosmeticUser {
-
     @Getter
     private final UUID uniqueId;
-    private int taskId;
+    private int taskId = -1;
     private final HashMap<CosmeticSlot, Cosmetic> playerCosmetics = new HashMap<>();
     private UserWardrobeManager userWardrobeManager;
     private UserBalloonManager userBalloonManager;
@@ -105,7 +104,6 @@ public class CosmeticUser {
             this.applyHiddenState(userData.getHiddenReasons());
         }
 
-        this.startTickTask();
         return this;
     }
 
@@ -163,25 +161,48 @@ public class CosmeticUser {
         }
     }
 
-    private void startTickTask() {
-        // Occasionally updates the entity cosmetics
-        Runnable run = () -> {
-            MessagesUtil.sendDebugMessages("Tick[uuid=" + uniqueId + "]", Level.INFO);
-            if (Hooks.isInvisible(uniqueId)) hideCosmetics(HiddenReason.VANISH);
-            else showCosmetics(HiddenReason.VANISH);
-            updateCosmetic();
-            if (isHidden() && !getUserEmoteManager().isPlayingEmote() && !getCosmetics().isEmpty()) MessagesUtil.sendActionBar(getPlayer(), "hidden-cosmetics");
-        };
-
+    /**
+     * Start ticking against the {@link CosmeticUser}.
+     * @implNote The tick-rate is determined by the {@link Settings#getTickPeriod()}, if it is less-than or equal to 0
+     * there will be no {@link BukkitTask} created, and the {@link CosmeticUser#taskId} will be -1
+     */
+    public final void startTicking() {
         int tickPeriod = Settings.getTickPeriod();
-        if (tickPeriod > 0) {
-            BukkitTask task = Bukkit.getScheduler().runTaskTimer(HMCCosmeticsPlugin.getInstance(), run, 0, tickPeriod);
-            taskId = task.getTaskId();
+        if(tickPeriod <= 0) {
+            MessagesUtil.sendDebugMessages("CosmeticUser tick is disabled.");
+            return;
+        }
+
+        final BukkitTask task = Bukkit.getScheduler().runTaskTimer(HMCCosmeticsPlugin.getInstance(), this::tick, 0, tickPeriod);
+        this.taskId = task.getTaskId();
+    }
+
+    /**
+     * Dispatch an operation to happen against this {@link CosmeticUser}
+     * at a pre-determined tick-rate.
+     * The tick-rate is determined by the {@link Settings#getTickPeriod()}.
+     */
+    protected void tick() {
+        MessagesUtil.sendDebugMessages("Tick[uuid=" + uniqueId + "]", Level.INFO);
+
+        if (Hooks.isInvisible(uniqueId)) {
+            this.hideCosmetics(HiddenReason.VANISH);
+        } else {
+            this.showCosmetics(HiddenReason.VANISH);
+        }
+
+        this.updateCosmetic();
+
+        if(isHidden() && !getUserEmoteManager().isPlayingEmote() && !getCosmetics().isEmpty()) {
+            MessagesUtil.sendActionBar(getPlayer(), "hidden-cosmetics");
         }
     }
 
     public void destroy() {
-        Bukkit.getScheduler().cancelTask(taskId);
+        if(this.taskId != -1) { // ensure we're actually ticking this user.
+            Bukkit.getScheduler().cancelTask(taskId);
+        }
+
         despawnBackpack();
         despawnBalloon();
     }
@@ -237,7 +258,6 @@ public class CosmeticUser {
         }
     }
 
-
     public void removeCosmeticSlot(CosmeticSlot slot) {
         // API
         PlayerCosmeticRemoveEvent event = new PlayerCosmeticRemoveEvent(this, getCosmetic(slot));
@@ -259,7 +279,6 @@ public class CosmeticUser {
         playerCosmetics.remove(slot);
         removeArmor(slot);
     }
-
 
     public void removeCosmeticSlot(Cosmetic cosmetic) {
         removeCosmeticSlot(cosmetic.getSlot());
