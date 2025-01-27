@@ -163,7 +163,7 @@ public class CosmeticUser {
 
     /**
      * Start ticking against the {@link CosmeticUser}.
-     * @implNote The tick-rate is determined by the {@link Settings#getTickPeriod()}, if it is less-than or equal to 0
+     * @implNote The tick-rate is determined by the tick period specified in the configuration, if it is less-than or equal to 0
      * there will be no {@link BukkitTask} created, and the {@link CosmeticUser#taskId} will be -1
      */
     public final void startTicking() {
@@ -180,7 +180,7 @@ public class CosmeticUser {
     /**
      * Dispatch an operation to happen against this {@link CosmeticUser}
      * at a pre-determined tick-rate.
-     * The tick-rate is determined by the {@link Settings#getTickPeriod()}.
+     * The tick-rate is determined by the tick period specified in the configuration.
      */
     protected void tick() {
         MessagesUtil.sendDebugMessages("Tick[uuid=" + uniqueId + "]", Level.INFO);
