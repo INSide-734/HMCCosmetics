@@ -100,6 +100,14 @@ allprojects {
         implementation("com.owen1212055:particlehelper:1.0.0-SNAPSHOT")
         implementation("com.ticxo.playeranimator:PlayerAnimator:R1.2.7")
     }
+
+    tasks {
+        javadoc {
+            // javadoc spec has these added.
+            (options as StandardJavadocDocletOptions)
+                .tags("apiNote:a:API:", "implSpec:a:Implementation Requirements", "implNote:a:Implementation Note:")
+        }
+    }
 }
 
 dependencies {
@@ -264,6 +272,9 @@ bukkit {
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+
+    withJavadocJar()
+    withSourcesJar()
 }
 
 fun getGitCommitHash(): String {
