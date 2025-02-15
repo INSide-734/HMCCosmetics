@@ -123,6 +123,7 @@ menu-settings:
 dye-menu:
   # If you use ItemsAdder, set this to "<white>:img_offset_-8::img_dye_menu:"
   # If you use Oraxen, set this to "<white><s:-8><g:dye_menu>"
+  # If you use Nexo, set this to "<white>%nexo_dye_menu%" and use PlaceholderAPI
   title: "<white>"
   input-slot: 10
   output-slot: 16
@@ -170,6 +171,7 @@ wardrobe:
     enabled: true
     # If you use ItemsAdder, set this to "<black>%img_title%
     # If you use Oraxen, set this to "<black><glyph:title>"
+    # If you use Nexo, set this to "<black>%nexo_title%" and use PlaceholderAPI
     text: "<black>"
     delay: 40
     title-fade-in: 1000 # milliseconds
