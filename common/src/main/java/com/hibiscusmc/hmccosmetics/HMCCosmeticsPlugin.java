@@ -14,6 +14,7 @@ import com.hibiscusmc.hmccosmetics.emotes.EmoteManager;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.hooks.items.HookHMCCosmetics;
+import com.hibiscusmc.hmccosmetics.hooks.misc.HookBetterHud;
 import com.hibiscusmc.hmccosmetics.hooks.placeholders.HMCPlaceholderExpansion;
 import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGHook;
 import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGListener;
@@ -52,6 +53,7 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
     public HMCCosmeticsPlugin() {
         super(13873, 1879);
         new HookHMCCosmetics();
+        new HookBetterHud();
     }
 
     @Override

@@ -139,6 +139,8 @@ hook-settings:
     # Checks worldguard regions for HMCC flags. If set to false, flags will not work properly.
     # Requires restart to apply changes.
     player-move-check: true
+  betterhud:
+    wardrobe-hide: true
 wardrobe:
   # how much yaw should change per tick, set to 0 for none
   rotation-speed: 3
