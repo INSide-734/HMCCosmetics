@@ -83,7 +83,7 @@ allprojects {
         compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.12")
         compileOnly("io.github.toxicity188:BetterHud-standard-api:1.12") //Standard api
         compileOnly("io.github.toxicity188:BetterHud-bukkit-api:1.12") //Platform api
-        compileOnly("io.github.toxicity188:BetterCommand:1.12") //BetterCommand library
+        compileOnly("io.github.toxicity188:BetterCommand:1.3") //BetterCommand library
         //compileOnly("it.unimi.dsi:fastutil:8.5.14")
         compileOnly("org.projectlombok:lombok:1.18.34")
         compileOnly("me.lojosho:HibiscusCommons:0.6.0-85d65299")
