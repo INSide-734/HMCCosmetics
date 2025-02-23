@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics.hooks.misc;
 
 import com.hibiscusmc.hmccosmetics.api.events.PlayerWardrobeEnterEvent;
 import com.hibiscusmc.hmccosmetics.api.events.PlayerWardrobeLeaveEvent;
+import com.hibiscusmc.hmccosmetics.config.Settings;
 import kr.toxicity.hud.api.BetterHud;
 import kr.toxicity.hud.api.player.HudPlayer;
 import me.lojosho.hibiscuscommons.hooks.Hook;
@@ -18,6 +19,7 @@ public class HookBetterHud extends Hook {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onPlayerEnterWardrobe(PlayerWardrobeEnterEvent event) {
+        if (!Settings.isWardrobeHideHud()) return;
         UUID uuid = event.getUniqueId();
         HudPlayer hudPlayer = BetterHud.getInstance().getPlayerManager().getHudPlayer(uuid);
         if (hudPlayer == null) return;
@@ -26,6 +28,7 @@ public class HookBetterHud extends Hook {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onPlayerLeaveWardrobe(PlayerWardrobeLeaveEvent event) {
+        if (!Settings.isWardrobeHideHud()) return;
         UUID uuid = event.getUniqueId();
         HudPlayer hudPlayer = BetterHud.getInstance().getPlayerManager().getHudPlayer(uuid);
         if (hudPlayer == null) return;

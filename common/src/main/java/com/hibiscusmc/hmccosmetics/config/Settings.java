@@ -172,7 +172,7 @@ public class Settings {
     @Getter @Setter
     private static boolean allPlayersHidden;
     @Getter
-    private static boolean showBetterHudInWardrobe;
+    private static boolean wardrobeHideHud;
 
 
     public static void load(ConfigurationNode source) {
@@ -276,7 +276,7 @@ public class Settings {
         nexoChangeReload = nexoSettings.node(HOOK_RELOAD_CHANGE_PATH).getBoolean(true);
 
         ConfigurationNode betterHudSettings = hookSettings.node(BETTER_HUD_PATH);
-        showBetterHudInWardrobe = betterHudSettings.node(BETTER_HUD_HIDE_IN_WARDROBE_PATH).getBoolean(true);
+        wardrobeHideHud = betterHudSettings.node(BETTER_HUD_HIDE_IN_WARDROBE_PATH).getBoolean(true);
 
         ConfigurationNode worldGuardSettings = hookSettings.node(HOOK_WORLDGUARD_PATH);
         worldGuardMoveCheck = worldGuardSettings.node(HOOK_WG_MOVE_CHECK_PATH).getBoolean(true);
