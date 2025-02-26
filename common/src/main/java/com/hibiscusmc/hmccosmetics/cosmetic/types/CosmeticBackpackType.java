@@ -25,15 +25,11 @@ import java.util.logging.Level;
 public class CosmeticBackpackType extends Cosmetic {
 
     @Getter
-    private final String modelName;
-    @Getter
     private int height = -1;
     private ItemStack firstPersonBackpack;
 
     public CosmeticBackpackType(String id, ConfigurationNode config) {
         super(id, config);
-
-        modelName = config.node("model").getString();
 
         if (!config.node("firstperson-item").virtual()) {
             this.firstPersonBackpack = generateItemStack(config.node("firstperson-item"));
@@ -83,7 +79,7 @@ public class CosmeticBackpackType extends Cosmetic {
                 //else NMSHandlers.getHandler().equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, firstPersonBackpack, owner);
                 PacketManager.equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(this, firstPersonBackpack), owner);
             }
-            MessagesUtil.sendDebugMessages("First Person Backpack Update[owner=" + user.getUniqueId() + ",player_location=" + loc + "]!", Level.INFO);
+            //MessagesUtil.sendDebugMessages("First Person Backpack Update[owner=" + user.getUniqueId() + ",player_location=" + loc + "]!", Level.INFO);
         }
 
         user.getUserBackpackManager().showBackpack();
