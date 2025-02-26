@@ -89,8 +89,8 @@ allprojects {
         compileOnly("me.lojosho:HibiscusCommons:0.6.0-85d65299")
 
         // Handled by Spigot Library Loader
-        compileOnly("net.kyori:adventure-api:4.18.0")
-        compileOnly("net.kyori:adventure-text-minimessage:4.18.0")
+        compileOnly("net.kyori:adventure-api:4.19.0")
+        compileOnly("net.kyori:adventure-text-minimessage:4.19.0")
         compileOnly("net.kyori:adventure-platform-bukkit:4.3.4")
 
         annotationProcessor("org.projectlombok:lombok:1.18.36")
