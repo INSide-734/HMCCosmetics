@@ -646,7 +646,7 @@ public class CosmeticUser {
         if (isInWardrobe() && !ignoreWardrobe) {
             if (WardrobeSettings.isTryCosmeticsInWardrobe() && userWardrobeManager.getWardrobeStatus().equals(UserWardrobeManager.WardrobeStatus.RUNNING)) return true;
         }
-        return getPlayer().hasPermission(cosmetic.getPermission());
+        return getEntity().hasPermission(cosmetic.getPermission());
     }
 
     public void hidePlayer() {
