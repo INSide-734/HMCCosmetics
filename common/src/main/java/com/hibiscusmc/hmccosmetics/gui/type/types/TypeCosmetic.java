@@ -128,8 +128,9 @@ public class TypeCosmetic extends Type {
     }
 
     @Override
-    public ItemStack setItem(CosmeticUser user, @NotNull ConfigurationNode config, ItemStack itemStack, int slot) {
-        itemStack.setItemMeta(processLoreLines(user, itemStack.getItemMeta()));
+    public ItemStack setItem(@NotNull CosmeticUser user, @NotNull ConfigurationNode config, @NotNull ItemStack itemStack, int slot) {
+        if (itemStack.hasItemMeta()) itemStack.setItemMeta(processLoreLines(user, itemStack.getItemMeta()));
+        else MessagesUtil.sendDebugMessages("ItemStack has no ItemMeta?");
 
         if (config.node("cosmetic").virtual()) {
             return itemStack;
@@ -153,7 +154,8 @@ public class TypeCosmetic extends Type {
             } catch (SerializationException e) {
                 throw new RuntimeException(e);
             }
-            itemStack.setItemMeta(processLoreLines(user, itemStack.getItemMeta()));
+            if (itemStack.hasItemMeta()) itemStack.setItemMeta(processLoreLines(user, itemStack.getItemMeta()));
+            else MessagesUtil.sendDebugMessages("ItemStack has no ItemMeta in equipped item?");
             return itemStack;
         }
 
@@ -170,7 +172,8 @@ public class TypeCosmetic extends Type {
             } catch (SerializationException e) {
                 throw new RuntimeException(e);
             }
-            itemStack.setItemMeta(processLoreLines(user, itemStack.getItemMeta()));
+            if (itemStack.hasItemMeta()) itemStack.setItemMeta(processLoreLines(user, itemStack.getItemMeta()));
+            else MessagesUtil.sendDebugMessages("ItemStack has no ItemMeta in locked item?");
             return itemStack;
         }
         return itemStack;
@@ -193,7 +196,7 @@ public class TypeCosmetic extends Type {
         }
 
         if (itemMeta instanceof SkullMeta skullMeta) {
-            if (skullMeta.hasOwner()) {
+            if (skullMeta.hasOwner() && skullMeta.getOwner() != null) {
                 skullMeta.setOwner(Hooks.processPlaceholders(user.getPlayer(), skullMeta.getOwner()));
             }
         }

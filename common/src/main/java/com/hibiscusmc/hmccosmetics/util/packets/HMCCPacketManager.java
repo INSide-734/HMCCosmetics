@@ -28,6 +28,8 @@ import java.util.*;
 
 public class HMCCPacketManager extends PacketManager {
 
+    private static final List<CosmeticSlot> EQUIPMENT_SLOTS = List.of(CosmeticSlot.HELMET, CosmeticSlot.CHESTPLATE, CosmeticSlot.LEGGINGS, CosmeticSlot.BOOTS, CosmeticSlot.MAINHAND, CosmeticSlot.OFFHAND);
+
     public static void sendEntitySpawnPacket(
             final @NotNull Location location,
             final int entityId,
@@ -91,8 +93,7 @@ public class HMCCPacketManager extends PacketManager {
             CosmeticSlot cosmeticSlot,
             List<Player> sendTo
     ) {
-        if (cosmeticSlot == CosmeticSlot.BACKPACK || cosmeticSlot == CosmeticSlot.CUSTOM || cosmeticSlot == CosmeticSlot.BALLOON || cosmeticSlot == CosmeticSlot.EMOTE) return;
-
+        if (!EQUIPMENT_SLOTS.contains(cosmeticSlot)) return;
         equipmentSlotUpdate(entityId, HMCCInventoryUtils.getEquipmentSlot(cosmeticSlot), user.getUserCosmeticItem(cosmeticSlot), sendTo);
     }
 
@@ -106,7 +107,9 @@ public class HMCCPacketManager extends PacketManager {
         final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
 
         // 0x21 = Invisible + Fire (Aka, burns to make it not take the light of the block its in, avoiding turning it black)
-        wrappedDataValueList.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x21));
+        byte mask = 0x20;
+        if (Settings.isBackpackPreventDarkness()) mask = 0x21;
+        wrappedDataValueList.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), mask));
         wrappedDataValueList.add(new WrappedDataValue(15, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x10));
         packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
         for (Player p : sendTo) sendPacket(p, packet);
@@ -379,13 +382,18 @@ public class HMCCPacketManager extends PacketManager {
         }
     }
 
+    /**
+     * Gets the nearby players (or viewers) of a location through the view distance set in the config. If the view distance is 0, it will return all players in the world.
+     * @param location
+     * @return
+     */
     @NotNull
-    public static List<Player> getViewers(Location location) {
+    public static List<Player> getViewers(@NotNull Location location) {
         ArrayList<Player> viewers = new ArrayList<>();
         if (Settings.getViewDistance() <= 0) {
             viewers.addAll(location.getWorld().getPlayers());
         } else {
-            viewers.addAll(HMCCPlayerUtils.getNearbyPlayers(location));
+            viewers.addAll(PacketManager.getViewers(location, Settings.getViewDistance()));
         }
         return viewers;
     }

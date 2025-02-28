@@ -30,11 +30,15 @@ public class Settings {
     private static final String UNAPPLY_DEATH_PATH = "unapply-on-death";
     private static final String FORCE_PERMISSION_JOIN_PATH = "force-permission-join";
     private static final String FORCE_SHOW_COSMETICS_PATH = "force-show-join";
+    private static final String ITEM_PROCESSING_PATH = "item-processing";
+    private static final String ITEM_PROCESS_DISPLAY_NAME_PATH = "display-name";
+    private static final String ITEM_PROCESS_LORE_PATH = "lore";
     private static final String DISABLED_GAMEMODE_PATH = "disabled-gamemode";
     private static final String DISABLED_GAMEMODE_GAMEMODES_PATH = "gamemodes";
     private static final String EMOTE_DISTANCE_PATH = "emote-distance";
     private static final String HOOK_SETTING_PATH = "hook-settings";
     private static final String HOOK_ITEMADDER_PATH = "itemsadder";
+    private static final String HOOK_NEXO_PATH = "nexo";
     private static final String HOOK_RELOAD_CHANGE_PATH = "reload-on-change";
     private static final String HOOK_WORLDGUARD_PATH = "worldguard";
     private static final String HOOK_WG_MOVE_CHECK_PATH = "player-move-check";
@@ -68,6 +72,9 @@ public class Settings {
     private static final String LOCKED_COSMETIC_COLOR_PATH = "locked-cosmetic-color";
     private static final String ENABLED_PATH = "enabled";
     private static final String SLOT_OPTIONS_PATH = "slot-options";
+    private static final String BACKPACK_PREVENT_DARKNESS_PATH = "backpack-prevent-darkness";
+    private static final String BETTER_HUD_PATH = "betterhud";
+    private static final String BETTER_HUD_HIDE_IN_WARDROBE_PATH = "wardrobe-hide";
 
     @Getter
     private static String defaultMenu;
@@ -88,7 +95,13 @@ public class Settings {
     @Getter
     private static boolean forceShowOnJoin;
     @Getter
+    private static boolean itemProcessingDisplayName;
+    @Getter
+    private static boolean itemProcessingLore;
+    @Getter
     private static boolean itemsAdderChangeReload;
+    @Getter
+    private static boolean nexoChangeReload;
     @Getter
     private static boolean worldGuardMoveCheck;
     @Getter
@@ -110,6 +123,8 @@ public class Settings {
     private static boolean disabledGamemodesEnabled;
     @Getter
     private static boolean balloonHeadForward;
+    @Getter
+    private static boolean backpackPreventDarkness;
     @Getter
     private static List<String> disabledGamemodes;
     @Getter
@@ -156,6 +171,8 @@ public class Settings {
     private static boolean emoteMoveCheck;
     @Getter @Setter
     private static boolean allPlayersHidden;
+    @Getter
+    private static boolean wardrobeHideHud;
 
 
     public static void load(ConfigurationNode source) {
@@ -184,6 +201,10 @@ public class Settings {
             disabledGamemodes = new ArrayList<>();
             disabledWorlds = new ArrayList<>();
         }
+
+        ConfigurationNode itemProcessingSettings = cosmeticSettings.node(ITEM_PROCESSING_PATH);
+        itemProcessingDisplayName = itemProcessingSettings.node(ITEM_PROCESS_DISPLAY_NAME_PATH).getBoolean(true);
+        itemProcessingLore = itemProcessingSettings.node(ITEM_PROCESS_LORE_PATH).getBoolean(true);
 
         unapplyOnDeath = cosmeticSettings.node(UNAPPLY_DEATH_PATH).getBoolean(false);
         forcePermissionJoin = cosmeticSettings.node(FORCE_PERMISSION_JOIN_PATH).getBoolean(false);
@@ -214,6 +235,7 @@ public class Settings {
         emoteMoveCheck = cosmeticSettings.node(COSMETIC_EMOTE_MOVE_CHECK_PATH).getBoolean(false);
         packetEntityTeleportCooldown = cosmeticSettings.node(COSMETIC_PACKET_ENTITY_TELEPORT_COOLDOWN_PATH).getInt(-1);
         balloonHeadForward = cosmeticSettings.node(COSMETIC_BALLOON_HEAD_FORWARD_PATH).getBoolean(false);
+        backpackPreventDarkness = cosmeticSettings.node(BACKPACK_PREVENT_DARKNESS_PATH).getBoolean(true);
 
         ConfigurationNode menuSettings = source.node(MENU_SETTINGS_PATH);
 
@@ -246,8 +268,15 @@ public class Settings {
         dyeMenuOutputSlot = dyeMenuSettings.node(DYE_MENU_OUTPUT_SLOT).getInt(25);
 
         ConfigurationNode hookSettings = source.node(HOOK_SETTING_PATH);
+
         ConfigurationNode itemsAdderSettings = hookSettings.node(HOOK_ITEMADDER_PATH);
         itemsAdderChangeReload = itemsAdderSettings.node(HOOK_RELOAD_CHANGE_PATH).getBoolean(false);
+
+        ConfigurationNode nexoSettings = hookSettings.node(HOOK_NEXO_PATH);
+        nexoChangeReload = nexoSettings.node(HOOK_RELOAD_CHANGE_PATH).getBoolean(true);
+
+        ConfigurationNode betterHudSettings = hookSettings.node(BETTER_HUD_PATH);
+        wardrobeHideHud = betterHudSettings.node(BETTER_HUD_HIDE_IN_WARDROBE_PATH).getBoolean(true);
 
         ConfigurationNode worldGuardSettings = hookSettings.node(HOOK_WORLDGUARD_PATH);
         worldGuardMoveCheck = worldGuardSettings.node(HOOK_WG_MOVE_CHECK_PATH).getBoolean(true);

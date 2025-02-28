@@ -4,10 +4,13 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.HMCCPlayerUtils;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -41,11 +44,16 @@ public class UserEntity {
         if (System.currentTimeMillis() - viewerLastUpdate <= 1000) return List.of(); //Prevents mass refreshes
         ArrayList<Player> newPlayers = new ArrayList<>();
         ArrayList<Player> removePlayers = new ArrayList<>();
-        List<Player> players = HMCCPlayerUtils.getNearbyPlayers(location);
+        List<Player> players = HMCCPacketManager.getViewers(location);
+        Entity ownerPlayer = Bukkit.getEntity(owner);
+        if (ownerPlayer == null) {
+            MessagesUtil.sendDebugMessages("Owner is null (refreshViewers), returning empty list");
+            return List.of();
+        }
 
         for (Player player : players) {
             CosmeticUser user = CosmeticUsers.getUser(player);
-            if (user != null && owner != user.getUniqueId() && user.isInWardrobe()) { // Fixes issue where players in wardrobe would see other players cosmetics if they were not in wardrobe
+            if (user != null && owner != user.getUniqueId() && user.isInWardrobe() && !player.canSee(ownerPlayer)) { // Fixes issue where players in wardrobe would see other players cosmetics if they were not in wardrobe
                 removePlayers.add(player);
                 HMCCPacketManager.sendEntityDestroyPacket(ids, List.of(player));
                 continue;

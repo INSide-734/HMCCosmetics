@@ -15,8 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
+import org.jetbrains.annotations.Nullable;
 
 public class DyeMenu {
 
@@ -27,7 +26,7 @@ public class DyeMenu {
             addCosmetic(user, cosmetic, null);
             return;
         }
-        ItemStack originalItem = user.getUserCosmeticItem(cosmetic);
+        ItemStack originalItem = cosmetic.getItem();
         if (originalItem == null || !cosmetic.isDyable()) return;
 
         Gui gui = HMCColorApi.createColorMenu(player);
@@ -65,7 +64,7 @@ public class DyeMenu {
         gui.open(player);
     }
 
-    private static void addCosmetic(@NotNull CosmeticUser user, Cosmetic cosmetic, Color color) {
+    private static void addCosmetic(@NotNull CosmeticUser user, @NotNull Cosmetic cosmetic, @Nullable Color color) {
         Player player = user.getPlayer();
         user.addPlayerCosmetic(cosmetic, color);
         player.setItemOnCursor(new ItemStack(Material.AIR));
