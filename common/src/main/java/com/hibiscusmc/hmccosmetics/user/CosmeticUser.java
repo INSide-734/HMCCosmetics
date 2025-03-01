@@ -8,6 +8,7 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.Wardrobe;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
+import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticHolder;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
@@ -44,7 +45,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.logging.Level;
 
-public class CosmeticUser {
+public class CosmeticUser implements CosmeticHolder {
     @Getter
     private final UUID uniqueId;
     private int taskId = -1;
@@ -207,19 +208,18 @@ public class CosmeticUser {
         despawnBalloon();
     }
 
+    @Override
     public Cosmetic getCosmetic(CosmeticSlot slot) {
         return playerCosmetics.get(slot);
     }
 
+    @Override
     public ImmutableCollection<Cosmetic> getCosmetics() {
         return ImmutableList.copyOf(playerCosmetics.values());
     }
 
-    public void addPlayerCosmetic(@NotNull Cosmetic cosmetic) {
-        addPlayerCosmetic(cosmetic, null);
-    }
-
-    public void addPlayerCosmetic(@NotNull Cosmetic cosmetic, @Nullable Color color) {
+    @Override
+    public void addCosmetic(@NotNull Cosmetic cosmetic, @Nullable Color color) {
         // API
         PlayerCosmeticEquipEvent event = new PlayerCosmeticEquipEvent(this, cosmetic);
         Bukkit.getPluginManager().callEvent(event);
@@ -251,13 +251,23 @@ public class CosmeticUser {
         Bukkit.getPluginManager().callEvent(postEquipEvent);
     }
 
-    public void removeCosmetics() {
-        // Small optimization could be made, but Concurrent modification prevents us from both getting and removing
-        for (CosmeticSlot slot : CosmeticSlot.values().values()) {
-            removeCosmeticSlot(slot);
-        }
+    /**
+     * @deprecated Use {@link #addCosmetic(Cosmetic)} instead
+     */
+    @Deprecated
+    public void addPlayerCosmetic(@NotNull Cosmetic cosmetic) {
+        addCosmetic(cosmetic);
     }
 
+    /**
+     * @deprecated Use {@link #addCosmetic(Cosmetic, Color)} instead
+     */
+    @Deprecated
+    public void addPlayerCosmetic(@NotNull Cosmetic cosmetic, @Nullable Color color) {
+        addCosmetic(cosmetic, color);
+    }
+
+    @Override
     public void removeCosmeticSlot(CosmeticSlot slot) {
         // API
         PlayerCosmeticRemoveEvent event = new PlayerCosmeticRemoveEvent(this, getCosmetic(slot));
@@ -280,23 +290,16 @@ public class CosmeticUser {
         removeArmor(slot);
     }
 
-    public void removeCosmeticSlot(Cosmetic cosmetic) {
-        removeCosmeticSlot(cosmetic.getSlot());
-    }
-
+    @Override
     public boolean hasCosmeticInSlot(CosmeticSlot slot) {
         return playerCosmetics.containsKey(slot);
-    }
-
-    public boolean hasCosmeticInSlot(Cosmetic cosmetic) {
-        if (getCosmetic(cosmetic.getSlot()) == null) return false;
-        return Objects.equals(cosmetic.getId(), getCosmetic(cosmetic.getSlot()).getId());
     }
 
     public Set<CosmeticSlot> getSlotsWithCosmetics() {
         return Set.copyOf(playerCosmetics.keySet());
     }
 
+    @Override
     public void updateCosmetic(CosmeticSlot slot) {
         if (getCosmetic(slot) == null) {
             return;
@@ -637,10 +640,7 @@ public class CosmeticUser {
         return dyableSlots;
     }
 
-    public boolean canEquipCosmetic(Cosmetic cosmetic) {
-        return canEquipCosmetic(cosmetic, false);
-    }
-
+    @Override
     public boolean canEquipCosmetic(Cosmetic cosmetic, boolean ignoreWardrobe) {
         if (!cosmetic.requiresPermission()) return true;
         if (isInWardrobe() && !ignoreWardrobe) {
