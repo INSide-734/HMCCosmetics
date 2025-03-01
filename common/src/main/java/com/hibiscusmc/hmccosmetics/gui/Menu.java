@@ -266,7 +266,7 @@ public class Menu {
 
         for (MenuItem item : menuItems) {
             Type type = item.type();
-            ItemStack modifiedItem = getMenuItem(user, type, item.itemConfig(), item.item().clone(), slot);
+            ItemStack modifiedItem = getMenuItem(viewer, cosmeticHolder, type, item.itemConfig(), item.item().clone(), slot);
             if (modifiedItem.getType().isAir()) continue;
             GuiItem guiItem = ItemBuilder.from(modifiedItem).asGuiItem();
             guiItem.setAction(event -> {
@@ -283,7 +283,7 @@ public class Menu {
                 }
                 MessagesUtil.sendDebugMessages("Updated Menu Item in slot number " + slot);
                 final ClickType clickType = event.getClick();
-                if (type != null) type.run(user, item.itemConfig(), clickType);
+                if (type != null) type.run(viewer, cosmeticHolder, item.itemConfig(), clickType);
                 updateMenu(viewer, cosmeticHolder, gui);
             });
 
@@ -319,11 +319,11 @@ public class Menu {
         return slots;
     }
 
-    @Contract("_, _, _, _, _ -> param2")
+    @Contract("_, _, _, _, _, _ -> param4")
     @NotNull
-    private ItemStack getMenuItem(CosmeticUser user, Type type, ConfigurationNode config, ItemStack itemStack, int slot) {
+    private ItemStack getMenuItem(Player viewer, CosmeticHolder cosmeticHolder, Type type, ConfigurationNode config, ItemStack itemStack, int slot) {
         if (!itemStack.hasItemMeta()) return itemStack;
-        return type.setItem(user, config, itemStack, slot);
+        return type.setItem(viewer, cosmeticHolder, config, itemStack, slot);
     }
 
     public boolean canOpen(Player player) {
