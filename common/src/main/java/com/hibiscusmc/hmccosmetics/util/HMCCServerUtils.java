@@ -33,7 +33,7 @@ public class HMCCServerUtils {
     }
 
     public static org.bukkit.entity.Entity getEntity(int entityId) {
-        return NMSHandlers.getHandler().getEntity(entityId);
+        return NMSHandlers.getHandler().getUtilHandler().getEntity(entityId);
     }
 
     /**
@@ -156,14 +156,5 @@ public class HMCCServerUtils {
             return nextYaw;
         }
         return nextYaw;
-    }
-
-    public static boolean hasClass(String className) {
-        try {
-            Class.forName(className);
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
     }
 }

@@ -14,10 +14,12 @@ public class Wardrobe {
     private final String id;
     @Getter @Setter
     private int distance;
-    @Getter @Setter
+    @Getter @Setter @Nullable
     private String permission;
     @Getter @Setter
     private WardrobeLocation location;
+    @Getter @Setter @Nullable
+    private String defaultMenu;
 
     /**
      * This creates a Wardrobe object with all the information that a user will need when entering.
@@ -25,12 +27,14 @@ public class Wardrobe {
      * @param location The 3 locations of the Wardrobe, if any of these 3 locations are null, the wardrobe will not work
      * @param permission The permission required to enter the wardrobe, if null, no permission is required
      * @param distance The distance from the wardrobe that the player can be to enter, if -1, the player can enter from any distance
+     * @param defaultMenu The default menu that the player will open when entering the wardrobe.
      */
-    public Wardrobe(@NotNull String id, @NotNull WardrobeLocation location, @Nullable String permission, int distance) {
+    public Wardrobe(@NotNull String id, @NotNull WardrobeLocation location, @Nullable String permission, int distance, @Nullable String defaultMenu) {
         this.id = id;
         this.location = location;
         this.distance = distance;
         if (permission != null) this.permission = permission;
+        if (defaultMenu != null) this.defaultMenu = defaultMenu;
     }
 
     /**
@@ -50,7 +54,7 @@ public class Wardrobe {
         Location wardrobeLocation = location.getNpcLocation();
         Location location = user.getEntity().getLocation();
         if (wardrobeLocation == null) return false;
-        if (distance == -1) return true;
+        if (distance <= 0) return true;
         if (!wardrobeLocation.getWorld().equals(location.getWorld())) return false;
         return wardrobeLocation.distanceSquared(location) <= distance * distance;
     }

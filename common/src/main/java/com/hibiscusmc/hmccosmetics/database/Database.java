@@ -12,6 +12,7 @@ import lombok.Getter;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
 public class Database {
@@ -56,7 +57,7 @@ public class Database {
         data.save(CosmeticUsers.getUser(player));
     }
 
-    public static CosmeticUser get(UUID uniqueId) {
+    public static CompletableFuture<UserData> get(UUID uniqueId) {
         return data.get(uniqueId);
     }
 

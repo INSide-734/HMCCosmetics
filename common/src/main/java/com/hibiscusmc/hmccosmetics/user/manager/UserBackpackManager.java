@@ -90,20 +90,6 @@ public class UserBackpackManager {
         PacketManager.equipmentSlotUpdate(getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(cosmeticBackpackType), outsideViewers);
         HMCCPacketManager.sendRidingPacket(entity.getEntityId(), passengerIDs, outsideViewers);
 
-        // No one should be using ME because it barely works but some still use it, so it's here
-        if (cosmeticBackpackType.getModelName() != null && Hooks.isActiveHook("ModelEngine")) {
-            if (ModelEngineAPI.getBlueprint(cosmeticBackpackType.getModelName()) == null) {
-                MessagesUtil.sendDebugMessages("Invalid Model Engine Blueprint " + cosmeticBackpackType.getModelName(), Level.SEVERE);
-                return;
-            }
-            /* TODO: Readd ModelEngine support
-            ModeledEntity modeledEntity = ModelEngineAPI.createModeledEntity(new PacketBaseEntity(getFirstArmorStandId(), UUID.randomUUID(), entity.getLocation()));
-            ActiveModel model = ModelEngineAPI.createActiveModel(ModelEngineAPI.getBlueprint(cosmeticBackpackType.getModelName()));
-            model.setCanHurt(false);
-            modeledEntity.addModel(model, false);
-             */
-        }
-
         MessagesUtil.sendDebugMessages("spawnBackpack Bukkit - Finish");
     }
 

@@ -5,6 +5,7 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
+import com.hibiscusmc.hmccosmetics.database.UserData;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.apache.commons.lang3.EnumUtils;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public abstract class Data {
 
@@ -22,7 +24,7 @@ public abstract class Data {
     public abstract void save(CosmeticUser user);
 
     @Nullable
-    public abstract CosmeticUser get(UUID uniqueId);
+    public abstract CompletableFuture<UserData> get(UUID uniqueId);
 
     public abstract void clear(UUID uniqueId);
 
@@ -48,13 +50,9 @@ public abstract class Data {
         return data.toString();
     }
 
-    public final Map<CosmeticSlot, Map<Cosmetic, Color>> deserializeData(CosmeticUser user, @NotNull String raw) {
-        return deserializeData(user, raw, Settings.isForcePermissionJoin());
-    }
-
     @NotNull
-    public final Map<CosmeticSlot, Map<Cosmetic, Color>> deserializeData(CosmeticUser user, @NotNull String raw, boolean permissionCheck) {
-        Map<CosmeticSlot, Map<Cosmetic, Color>> cosmetics = new HashMap<>();
+    public final HashMap<CosmeticSlot, Map.Entry<Cosmetic, Integer>> deserializeData(@NotNull String raw) {
+        HashMap<CosmeticSlot, Map.Entry<Cosmetic, Integer>> cosmetics = new HashMap<>();
 
         String[] rawData = raw.split(",");
         ArrayList<CosmeticUser.HiddenReason> hiddenReason = new ArrayList<>();
@@ -76,59 +74,14 @@ public abstract class Data {
                 String[] colorSplitData = splitData[1].split("&");
                 if (Cosmetics.hasCosmetic(colorSplitData[0])) cosmetic = Cosmetics.getCosmetic(colorSplitData[0]);
                 if (slot == null || cosmetic == null) continue;
-                if (permissionCheck && cosmetic.requiresPermission()) {
-                    if (user.getPlayer() != null && !user.getPlayer().hasPermission(cosmetic.getPermission())) {
-                        continue;
-                    }
-                }
-                cosmetics.put(slot, Map.of(cosmetic, Color.fromRGB(Integer.parseInt(colorSplitData[1]))));
+                cosmetics.put(slot, Map.entry(cosmetic, Integer.parseInt(colorSplitData[1])));
             } else {
                 if (Cosmetics.hasCosmetic(splitData[1])) cosmetic = Cosmetics.getCosmetic(splitData[1]);
                 if (slot == null || cosmetic == null) continue;
-                if (permissionCheck && cosmetic.requiresPermission()) {
-                    if (user.getPlayer() != null && !user.getPlayer().hasPermission(cosmetic.getPermission())) {
-                        continue;
-                    }
-                }
-                HashMap<Cosmetic, Color> cosmeticColorHashMap = new HashMap<>();
-                cosmeticColorHashMap.put(cosmetic, null);
-                cosmetics.put(slot, cosmeticColorHashMap);
+                cosmetics.put(slot, Map.entry(cosmetic, -1));
             }
         }
 
-        MessagesUtil.sendDebugMessages("Hidden Reason: " + hiddenReason);
-        // if else this, if else that, if else I got to deal with this anymore i'll lose my mind
-        if (!hiddenReason.isEmpty()) {
-            for (CosmeticUser.HiddenReason reason : hiddenReason) user.silentlyAddHideFlag(reason);
-        } else {
-            Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
-                // Handle gamemode check
-                if (user.getPlayer() != null && Settings.isDisabledGamemodesEnabled() && Settings.getDisabledGamemodes().contains(user.getPlayer().getGameMode().toString())) {
-                    MessagesUtil.sendDebugMessages("Hiding Cosmetics due to gamemode");
-                    user.hideCosmetics(CosmeticUser.HiddenReason.GAMEMODE);
-                    return;
-                } else {
-                    if (user.isHidden(CosmeticUser.HiddenReason.GAMEMODE)) {
-                        MessagesUtil.sendDebugMessages("Join Gamemode Check: Showing Cosmetics");
-                        user.showCosmetics(CosmeticUser.HiddenReason.GAMEMODE);
-                        return;
-                    }
-                }
-                // Handle world check
-                if (user.getPlayer() != null && Settings.getDisabledWorlds().contains(user.getPlayer().getWorld().getName())) {
-                    MessagesUtil.sendDebugMessages("Hiding Cosmetics due to world");
-                    user.hideCosmetics(CosmeticUser.HiddenReason.WORLD);
-                } else {
-                    if (user.isHidden(CosmeticUser.HiddenReason.WORLD)) {
-                        MessagesUtil.sendDebugMessages("Join World Check: Showing Cosmetics");
-                        user.showCosmetics(CosmeticUser.HiddenReason.WORLD);
-                    }
-                }
-                if (Settings.isAllPlayersHidden()) {
-                    user.hideCosmetics(CosmeticUser.HiddenReason.DISABLED);
-                }
-            });
-        }
         return cosmetics;
     }
 

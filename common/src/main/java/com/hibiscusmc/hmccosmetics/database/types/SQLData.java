@@ -3,6 +3,7 @@ package com.hibiscusmc.hmccosmetics.database.types;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
+import com.hibiscusmc.hmccosmetics.database.UserData;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -13,14 +14,15 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public abstract class SQLData extends Data {
     @Override
     @SuppressWarnings({"resource"}) // Duplicate is from deprecated InternalData
-    public CosmeticUser get(UUID uniqueId) {
-        CosmeticUser user = new CosmeticUser(uniqueId);
+    public CompletableFuture<UserData> get(UUID uniqueId) {
+        return CompletableFuture.supplyAsync(() -> {
+            UserData data = new UserData(uniqueId);
 
-        Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
             PreparedStatement preparedStatement = null;
             try {
                 preparedStatement = preparedStatement("SELECT * FROM COSMETICDATABASE WHERE UUID = ?;");
@@ -28,21 +30,8 @@ public abstract class SQLData extends Data {
                 ResultSet rs = preparedStatement.executeQuery();
                 if (rs.next()) {
                     String rawData = rs.getString("COSMETICS");
-                    Map<CosmeticSlot, Map<Cosmetic, Color>> cosmetics = deserializeData(user, rawData);
-                    // Load cosmetics, put them into the addedCosmetic hashmap
-                    HashMap<Cosmetic, Color> addedCosmetics = new HashMap<>();
-                    for (Map<Cosmetic, Color> cosmeticColors : cosmetics.values()) {
-                        for (Cosmetic cosmetic : cosmeticColors.keySet()) {
-                            addedCosmetics.put(cosmetic, cosmeticColors.get(cosmetic));
-                        }
-                    }
-                    // Run a task on the main thread, adding the cosmetics to the player
-                    Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
-                        // This can not be async.
-                        for (Cosmetic cosmetic : addedCosmetics.keySet()) {
-                            user.addPlayerCosmetic(cosmetic, addedCosmetics.get(cosmetic));
-                        }
-                    });
+                    HashMap<CosmeticSlot, Map.Entry<Cosmetic, Integer>> cosmetics = deserializeData(rawData);
+                    data.setCosmetics(cosmetics);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -51,9 +40,8 @@ public abstract class SQLData extends Data {
                     if (preparedStatement != null) preparedStatement.close();
                 } catch (SQLException e) {}
             }
+            return data;
         });
-
-        return user;
     }
 
     @Override

@@ -14,12 +14,14 @@ import com.hibiscusmc.hmccosmetics.emotes.EmoteManager;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.hooks.items.HookHMCCosmetics;
+import com.hibiscusmc.hmccosmetics.hooks.misc.HookBetterHud;
 import com.hibiscusmc.hmccosmetics.hooks.placeholders.HMCPlaceholderExpansion;
 import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGHook;
 import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGListener;
 import com.hibiscusmc.hmccosmetics.listener.PaperPlayerGameListener;
 import com.hibiscusmc.hmccosmetics.listener.PlayerConnectionListener;
 import com.hibiscusmc.hmccosmetics.listener.PlayerGameListener;
+import com.hibiscusmc.hmccosmetics.listener.ServerListener;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
@@ -51,6 +53,7 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
     public HMCCosmeticsPlugin() {
         super(13873, 1879);
         new HookHMCCosmetics();
+        new HookBetterHud();
     }
 
     @Override
@@ -94,6 +97,7 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         // Listener
         getServer().getPluginManager().registerEvents(new PlayerConnectionListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerGameListener(), this);
+        getServer().getPluginManager().registerEvents(new ServerListener(), this);
         // Taken from PaperLib
         if (HibiscusCommonsPlugin.isOnPaper()) {
             getServer().getPluginManager().registerEvents(new PaperPlayerGameListener(), this);

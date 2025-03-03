@@ -2,7 +2,6 @@ package com.hibiscusmc.hmccosmetics.config;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
-import com.hibiscusmc.hmccosmetics.util.misc.Utils;
 import lombok.Getter;
 import me.lojosho.hibiscuscommons.config.serializer.LocationSerializer;
 import me.lojosho.shaded.configurate.ConfigurationNode;
@@ -45,6 +44,7 @@ public class WardrobeSettings {
     private static final String WARDROBES_PATH = "wardrobes";
     private static final String PERMISSION_PATH = "permission";
     private static final String DISTANCE_PATH = "distance";
+    private static final String WARDROBE_DEFAULT_MENU = "default-menu";
     private static final String BOSSBAR_PATH = "bossbar";
     private static final String BOSSBAR_ENABLE_PATH = "enabled";
     private static final String BOSSBAR_TEXT_PATH = "text";
@@ -169,14 +169,16 @@ public class WardrobeSettings {
                 MessagesUtil.sendDebugMessages("Wardrobe Location: " + npcLocation);
                 Location viewerLocation = LocationSerializer.INSTANCE.deserialize(Location.class, wardrobesNode.node(VIEWER_LOCATION_PATH));
                 MessagesUtil.sendDebugMessages("Viewer Location: " + viewerLocation);
-                Location leaveLocation = Utils.replaceIfNull(LocationSerializer.INSTANCE.deserialize(Location.class, wardrobesNode.node(LEAVE_LOCATION_PATH)), viewerLocation);
+                Location leaveLocation = LocationSerializer.INSTANCE.deserialize(Location.class, wardrobesNode.node(LEAVE_LOCATION_PATH));
+                if (leaveLocation == null) leaveLocation = viewerLocation;
                 MessagesUtil.sendDebugMessages("Leave Location: " + leaveLocation);
                 WardrobeLocation wardrobeLocation = new WardrobeLocation(npcLocation, viewerLocation, leaveLocation);
 
                 String permission = wardrobesNode.node(PERMISSION_PATH).getString();
+                String defaultMenu = wardrobesNode.node(WARDROBE_DEFAULT_MENU).getString();
                 int distance = wardrobesNode.node(DISTANCE_PATH).getInt(-1);
 
-                Wardrobe wardrobe = new Wardrobe(id, wardrobeLocation, permission, distance);
+                Wardrobe wardrobe = new Wardrobe(id, wardrobeLocation, permission, distance, defaultMenu);
                 addWardrobe(wardrobe);
             } catch (Exception e) {
                 MessagesUtil.sendDebugMessages("Unable to create wardrobe " + id, Level.SEVERE);
@@ -277,6 +279,16 @@ public class WardrobeSettings {
         HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
 
         plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".distance", distance);
+
+        plugin.saveConfig();
+    }
+
+    public static void setWardrobeDefaultMenu(Wardrobe wardrobe, String defaultMenu) {
+        wardrobe.setDefaultMenu(defaultMenu);
+
+        HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
+
+        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".default-menu", defaultMenu);
 
         plugin.saveConfig();
     }

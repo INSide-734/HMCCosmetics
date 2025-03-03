@@ -43,10 +43,14 @@ public class CosmeticCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
         boolean silent = false;
+        boolean console = false;
+
+        if (!(sender instanceof Player)) {
+            console = true;
+        }
 
         if (args.length == 0) {
-            if (!(sender instanceof Player)) {
-                // Console
+            if (console) {
                 return true;
             }
             if (!sender.hasPermission("hmccosmetics.cmd.default")) {
@@ -140,7 +144,7 @@ public class CosmeticCommand implements CommandExecutor {
 
                 CosmeticUser user = CosmeticUsers.getUser(player);
 
-                if (!user.canEquipCosmetic(cosmetic)) {
+                if (!user.canEquipCosmetic(cosmetic) && !console) {
                     if (!silent) MessagesUtil.sendMessage(player, "no-cosmetic-permission");
                     return true;
                 }
@@ -148,7 +152,7 @@ public class CosmeticCommand implements CommandExecutor {
                 TagResolver placeholders =
                         TagResolver.resolver(Placeholder.parsed("cosmetic", cosmetic.getId()),
                                 TagResolver.resolver(Placeholder.parsed("player", player.getName())),
-                                TagResolver.resolver(Placeholder.parsed("cosmeticslot", cosmetic.getSlot().name())));
+                                TagResolver.resolver(Placeholder.parsed("cosmeticslot", cosmetic.getSlot().toString())));
 
                 if (!silent) MessagesUtil.sendMessage(player, "equip-cosmetic", placeholders);
 
@@ -183,11 +187,12 @@ public class CosmeticCommand implements CommandExecutor {
                 if (args[1].equalsIgnoreCase("all")) {
                     cosmeticSlots = user.getSlotsWithCosmetics();
                 } else {
-                    if (!EnumUtils.isValidEnum(CosmeticSlot.class, args[1].toUpperCase())) {
+                    String rawSlot = args[1].toUpperCase();
+                    if (!CosmeticSlot.contains(rawSlot)) {
                         if (!silent) MessagesUtil.sendMessage(sender, "invalid-slot");
                         return true;
                     }
-                    cosmeticSlots = Set.of(CosmeticSlot.valueOf(args[1].toUpperCase()));
+                    cosmeticSlots = Set.of(CosmeticSlot.valueOf(rawSlot));
                 }
 
                 for (CosmeticSlot cosmeticSlot : cosmeticSlots) {
@@ -199,7 +204,7 @@ public class CosmeticCommand implements CommandExecutor {
                     TagResolver placeholders =
                             TagResolver.resolver(Placeholder.parsed("cosmetic", user.getCosmetic(cosmeticSlot).getId()),
                                     TagResolver.resolver(Placeholder.parsed("player", player.getName())),
-                                    TagResolver.resolver(Placeholder.parsed("cosmeticslot", cosmeticSlot.name())));
+                                    TagResolver.resolver(Placeholder.parsed("cosmeticslot", cosmeticSlot.toString())));
 
                     if (!silent) MessagesUtil.sendMessage(player, "unequip-cosmetic", placeholders);
 
@@ -239,20 +244,24 @@ public class CosmeticCommand implements CommandExecutor {
                 CosmeticUser user = CosmeticUsers.getUser(player);
 
                 if (user.isInWardrobe()) {
-                    user.leaveWardrobe();
+                    user.leaveWardrobe(false);
                 } else {
-                    user.enterWardrobe(false, wardrobe);
+                    user.enterWardrobe(wardrobe, false);
                 }
                 return true;
             }
             // cosmetic menu exampleMenu playerName
             case ("menu") -> {
-                if (args.length == 1) return true;
                 if (!sender.hasPermission("hmccosmetics.cmd.menu")) {
                     if (!silent) MessagesUtil.sendMessage(sender, "no-permission");
                     return true;
                 }
-                Menu menu = Menus.getMenu(args[1]);
+                Menu menu;
+                if (args.length == 1) {
+                    menu = Menus.getDefaultMenu();
+                } else {
+                    menu = Menus.getMenu(args[1]);
+                }
 
                 if (sender instanceof Player) player = ((Player) sender).getPlayer();
                 if (sender.hasPermission("hmccosmetics.cmd.menu.other")) {
@@ -298,11 +307,12 @@ public class CosmeticCommand implements CommandExecutor {
                     return true;
                 }
 
-                if (!EnumUtils.isValidEnum(CosmeticSlot.class, args[1])) {
+                String rawSlot = args[1];
+                if (!CosmeticSlot.contains(rawSlot)) {
                     if (!silent) MessagesUtil.sendMessage(player, "invalid-slot");
                     return true;
                 }
-                CosmeticSlot slot = CosmeticSlot.valueOf(args[1]);
+                CosmeticSlot slot = CosmeticSlot.valueOf(rawSlot);
                 Cosmetic cosmetic = user.getCosmetic(slot);
 
                 if (args.length >= 3) {
@@ -334,7 +344,7 @@ public class CosmeticCommand implements CommandExecutor {
                 }
                 Wardrobe wardrobe = WardrobeSettings.getWardrobe(args[1]);
                 if (wardrobe == null) {
-                    wardrobe = new Wardrobe(args[1], new WardrobeLocation(null, null, null), null, -1);
+                    wardrobe = new Wardrobe(args[1], new WardrobeLocation(null, null, null), null, -1, null);
                     WardrobeSettings.addWardrobe(wardrobe);
                     //MessagesUtil.sendMessage(player, "no-wardrobes");
                     //return true;
@@ -367,6 +377,11 @@ public class CosmeticCommand implements CommandExecutor {
                     if (args[2].equalsIgnoreCase("distance")) {
                         WardrobeSettings.setWardrobeDistance(wardrobe, Integer.parseInt(args[3]));
                         if (!silent) MessagesUtil.sendMessage(player, "set-wardrobe-distance");
+                        return true;
+                    }
+                    if (args[2].equalsIgnoreCase("defaultmenu")) {
+                        WardrobeSettings.setWardrobeDefaultMenu(wardrobe, args[3]);
+                        if (!silent) MessagesUtil.sendMessage(player, "set-wardrobe-menu");
                         return true;
                     }
                 }
