@@ -15,9 +15,9 @@ import java.util.Objects;
  * users, for example.
  */
 public interface CosmeticHolder {
-    @Nullable Cosmetic getCosmetic(CosmeticSlot slot);
+    @Nullable Cosmetic getCosmetic(@NotNull CosmeticSlot slot);
 
-    ImmutableCollection<Cosmetic> getCosmetics();
+    @NotNull ImmutableCollection<Cosmetic> getCosmetics();
 
     void addCosmetic(@NotNull Cosmetic cosmetic, @Nullable Color color);
 
@@ -32,29 +32,29 @@ public interface CosmeticHolder {
         }
     }
 
-    void removeCosmeticSlot(CosmeticSlot slot);
+    void removeCosmeticSlot(@NotNull CosmeticSlot slot);
 
-    default void removeCosmeticSlot(Cosmetic cosmetic) {
+    default void removeCosmeticSlot(@NotNull Cosmetic cosmetic) {
         removeCosmeticSlot(cosmetic.getSlot());
     }
 
-    default boolean hasCosmeticInSlot(CosmeticSlot slot) {
+    default boolean hasCosmeticInSlot(@NotNull CosmeticSlot slot) {
         return getCosmetic(slot) != null;
     }
 
-    default boolean hasCosmeticInSlot(Cosmetic cosmetic) {
+    default boolean hasCosmeticInSlot(@NotNull Cosmetic cosmetic) {
         final var existingCosmetic = getCosmetic(cosmetic.getSlot());
         if (existingCosmetic == null) return false;
         return Objects.equals(cosmetic.getId(), existingCosmetic.getId());
     }
 
-    default boolean canEquipCosmetic(Cosmetic cosmetic) {
+    default boolean canEquipCosmetic(@NotNull Cosmetic cosmetic) {
         return canEquipCosmetic(cosmetic, false);
     }
 
-    boolean canEquipCosmetic(Cosmetic cosmetic, boolean ignoreWardrobe);
+    boolean canEquipCosmetic(@NotNull Cosmetic cosmetic, boolean ignoreWardrobe);
 
-    void updateCosmetic(CosmeticSlot slot);
+    void updateCosmetic(@NotNull CosmeticSlot slot);
 
     /**
      * Just for backwards compatibility, ensures that the given viewer and the given cosmetic holder

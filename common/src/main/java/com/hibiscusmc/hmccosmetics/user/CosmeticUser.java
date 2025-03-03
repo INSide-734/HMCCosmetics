@@ -209,12 +209,12 @@ public class CosmeticUser implements CosmeticHolder {
     }
 
     @Override
-    public Cosmetic getCosmetic(CosmeticSlot slot) {
+    public Cosmetic getCosmetic(@NotNull CosmeticSlot slot) {
         return playerCosmetics.get(slot);
     }
 
     @Override
-    public ImmutableCollection<Cosmetic> getCosmetics() {
+    public @NotNull ImmutableCollection<Cosmetic> getCosmetics() {
         return ImmutableList.copyOf(playerCosmetics.values());
     }
 
@@ -268,7 +268,7 @@ public class CosmeticUser implements CosmeticHolder {
     }
 
     @Override
-    public void removeCosmeticSlot(CosmeticSlot slot) {
+    public void removeCosmeticSlot(@NotNull CosmeticSlot slot) {
         // API
         PlayerCosmeticRemoveEvent event = new PlayerCosmeticRemoveEvent(this, getCosmetic(slot));
         Bukkit.getPluginManager().callEvent(event);
@@ -291,7 +291,7 @@ public class CosmeticUser implements CosmeticHolder {
     }
 
     @Override
-    public boolean hasCosmeticInSlot(CosmeticSlot slot) {
+    public boolean hasCosmeticInSlot(@NotNull CosmeticSlot slot) {
         return playerCosmetics.containsKey(slot);
     }
 
@@ -300,7 +300,7 @@ public class CosmeticUser implements CosmeticHolder {
     }
 
     @Override
-    public void updateCosmetic(CosmeticSlot slot) {
+    public void updateCosmetic(@NotNull CosmeticSlot slot) {
         if (getCosmetic(slot) == null) {
             return;
         }
@@ -641,7 +641,7 @@ public class CosmeticUser implements CosmeticHolder {
     }
 
     @Override
-    public boolean canEquipCosmetic(Cosmetic cosmetic, boolean ignoreWardrobe) {
+    public boolean canEquipCosmetic(@NotNull Cosmetic cosmetic, boolean ignoreWardrobe) {
         if (!cosmetic.requiresPermission()) return true;
         if (isInWardrobe() && !ignoreWardrobe) {
             if (WardrobeSettings.isTryCosmeticsInWardrobe() && userWardrobeManager.getWardrobeStatus().equals(UserWardrobeManager.WardrobeStatus.RUNNING)) return true;
